@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import FormInput from '../components/FormInput';
+import TodoItem from '../components/TodoItem';
 import Toggle from '../components/Toggle';
 
 export default function PlaygroundScreen() {
@@ -17,6 +18,8 @@ export default function PlaygroundScreen() {
         isPassword={true} />
 
       <Toggle />
+      <TodoItem text="Buy milk" />
+      <TodoItem text="Read 20 pages from my book" />
       
     </View>
   );
