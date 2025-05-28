@@ -10,7 +10,7 @@ export default function PlaygroundScreen() {
   return (
     <View style={styles.container}>
       <FormInput
-        placeholder="Enter your name"
+        placeholder="Name"
         value={name}
         onChangeText={setName} />
       
