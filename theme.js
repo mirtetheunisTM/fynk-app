@@ -1,3 +1,8 @@
+/* This file is used to define the colors and fonts that are used in the app.
+    You can use it by importing it in a component or screen.
+    Use colors: theme.colors.darkBlue
+    Use fonts: theme.fonts.h1 */
+
 import { StyleSheet } from 'react-native';
 
 const colors = {

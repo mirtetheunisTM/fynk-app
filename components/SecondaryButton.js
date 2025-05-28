@@ -1,3 +1,8 @@
+/* Input values:
+  title: string = title of the button
+  onPress: function = function to be called when the button is pressed
+*/
+
 import { Pressable, StyleSheet, Text } from 'react-native';
 import theme from '../theme';
 

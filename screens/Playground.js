@@ -1,12 +1,18 @@
+/* This screen is meant to be used to test out components, preferably on the web, as this is easier and faster.*/
+
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import PrimaryButton from '../components/PrimaryButton';
-import SecondaryButton from '../components/SecondaryButton';
+import FormInput from '../components/FormInput';
 
 export default function PlaygroundScreen() {
+  const [name, setName] = useState('');
+
   return (
     <View style={styles.container}>
-      <PrimaryButton title="Login" onPress={() => alert('Clicked!')} />
-      <SecondaryButton title="Register with Apple" onPress={() => alert('Clicked!')} />
+      <FormInput
+        placeholder="Enter your name"
+        value={name}
+        onChangeText={setName} />
       
     </View>
   );
@@ -18,6 +24,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#fff',
   },
 });
