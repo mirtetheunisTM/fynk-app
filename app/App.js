@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import PlaygroundScreen from '../screens/Playground';
+import IntroScreen from '../screens/IntroScreen';
 
 // Prevent auto hiding of splash until fonts are loaded
 SplashScreen.preventAutoHideAsync();
@@ -18,8 +18,8 @@ export default function App() {
   const Stack = createNativeStackNavigator();
 
   return (
-    <Stack.Navigator initialRouteName="Playground">
-      <Stack.Screen name="Playground" component={PlaygroundScreen} />
+    <Stack.Navigator initialRouteName="IntroScreen">
+      <Stack.Screen name="IntroScreen" component={IntroScreen} />
     </Stack.Navigator>
   );
 }
