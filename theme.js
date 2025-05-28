@@ -38,6 +38,7 @@ const fonts = StyleSheet.create({
         fontSize: 16,
         fontWeight: '400',
         lineHeight: 1.25,
+        color: '#1C2133',
     },
     caption: {
         fontFamily: 'Inter',

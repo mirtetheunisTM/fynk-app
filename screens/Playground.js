@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import FormInput from '../components/FormInput';
+import Toggle from '../components/Toggle';
 
 export default function PlaygroundScreen() {
   const [name, setName] = useState('');
@@ -10,9 +11,12 @@ export default function PlaygroundScreen() {
   return (
     <View style={styles.container}>
       <FormInput
-        placeholder="Name"
+        placeholder="Password"
         value={name}
-        onChangeText={setName} />
+        onChangeText={setName}
+        isPassword={true} />
+
+      <Toggle />
       
     </View>
   );
