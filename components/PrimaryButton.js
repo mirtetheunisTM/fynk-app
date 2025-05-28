@@ -7,7 +7,7 @@ export default function PrimaryButton({ title, onPress }) {
       onPress={onPress}
       style={({ pressed }) => [
         styles.btn,
-        pressed && styles.pressed, // pressed state
+        pressed && styles.pressed,
       ]}
     >
       <Text style={theme.fonts.ctaPrim}>{title}</Text>

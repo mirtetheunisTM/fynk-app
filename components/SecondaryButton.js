@@ -1,11 +1,17 @@
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 import theme from '../theme';
 
 export default function SecondaryButton({ title, onPress }) {
   return (
-    <TouchableOpacity style={styles.btn} onPress={onPress}>
-      <Text style={theme.fonts.ctaSec}>{title}</Text>
-    </TouchableOpacity>
+    <Pressable
+          onPress={onPress}
+          style={({ pressed }) => [
+            styles.btn,
+            pressed && styles.pressed,
+          ]}
+        >
+          <Text style={theme.fonts.ctaSec}>{title}</Text>
+        </Pressable>
   );
 }
 
@@ -19,4 +25,8 @@ const styles = StyleSheet.create({
     width: 350,
     height: 48,
   },
+
+  pressed: {
+      backgroundColor: theme.colors.primaryPurple,
+    },
 });
