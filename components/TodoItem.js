@@ -1,13 +1,20 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import theme from '../theme';
 
 export default function TodoItem({ text }) {
-  return (
-    <View style={styles.container}>
-      <View style={styles.circle} />
-      <Text style={theme.fonts.body}>{text}</Text>
-    </View>
-  );
+    const [completed, setCompleted] = useState(false);
+
+    return (
+        <View style={styles.container}>
+        <Pressable onPress={() => setCompleted(!completed)}>
+            <View style={[styles.circle, completed && styles.circleCompleted]}>
+            {completed && <Text style={styles.checkmark}>✓</Text>}
+            </View>
+        </Pressable>
+        <Text style={[theme.fonts.body, completed && styles.textCompleted]}>{text}</Text>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -27,5 +34,20 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.lila,
     backgroundColor: 'transparent',
     marginRight: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  circleCompleted: {
+    backgroundColor: theme.colors.lila,
+  },
+  checkmark: {
+    color: theme.colors.darkBlue,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: 'bold',
+  },
+  textCompleted: {
+    color: '#1C2133B3',
+    textDecorationLine: 'line-through',
   },
 });
