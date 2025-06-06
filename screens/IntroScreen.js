@@ -1,12 +1,11 @@
+//import LinearGradient from 'expo-linear-gradient';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import PrimaryButton from '../components/PrimaryButton';
 import SecondaryButton from '../components/SecondaryButton';
 import theme from '../theme';
 
 export default function IntroScreen() {
   return (
-    <LinearGradient colors={['#FCFCFC00', '#FCFCFC', '#C4CFFF', '#9CB0FF']} style={{ flex: 1 }}>
         <View style={styles.container}>
         {/* Section 1: Logo + H2 */}
         <View style={styles.section}>
@@ -30,7 +29,6 @@ export default function IntroScreen() {
             </TouchableOpacity>
         </View>
         </View>
-    </LinearGradient>
   );
 }
 
