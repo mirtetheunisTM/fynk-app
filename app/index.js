@@ -3,6 +3,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import IntroScreen from '../screens/IntroScreen';
 import LoginScreen from '../screens/LoginScreen';
+import PlaygroundScreen from '../screens/Playground';
 import RegisterScreen from '../screens/RegisterScreen';
 
 // Prevent auto hiding of splash until fonts are loaded
@@ -20,7 +21,8 @@ export default function App() {
   const Stack = createNativeStackNavigator();
 
   return (
-    <Stack.Navigator initialRouteName="IntroScreen">
+    <Stack.Navigator initialRouteName="Playground">
+      <Stack.Screen name="Playground" component={PlaygroundScreen} options={{ headerShown: false }} />
       <Stack.Screen name="IntroScreen" component={IntroScreen} options={{ headerShown: false }} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }} />
