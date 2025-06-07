@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
 import SecondaryButton from '../components/SecondaryButton';
 import theme from '../theme';
@@ -8,6 +8,10 @@ export default function IntroScreen() {
   const navigation = useNavigation();
 
   return (
+    <ImageBackground
+        source={require('../assets/images/gradient.png')}
+        resizeMode="cover"
+        flex={1}>
         <View style={styles.container}>
         {/* Section 1: Logo + H2 */}
         <View style={styles.section}>
@@ -32,6 +36,7 @@ export default function IntroScreen() {
             </TouchableOpacity>
         </View>
         </View>
+      </ImageBackground>
   );
 }
 
@@ -41,7 +46,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 204,
     justifyContent: 'space-between',
-    backgroundColor: theme.colors.neutral,
   },
   section: {
     marginBottom: 24,
