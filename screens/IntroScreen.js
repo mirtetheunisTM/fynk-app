@@ -18,7 +18,8 @@ export default function IntroScreen() {
         {/* Section 2: Buttons */}
         <View style={styles.section}>
             <View style={styles.buttonSpacing}>
-            <PrimaryButton title="Continue with e-mail" />
+            <PrimaryButton title="Continue with e-mail"
+                onPress={() => navigation.navigate('RegisterScreen')} />
             </View>
             <SecondaryButton title="Register with Apple" />
         </View>

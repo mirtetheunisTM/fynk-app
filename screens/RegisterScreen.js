@@ -4,7 +4,7 @@ import FormInput from '../components/FormInput';
 import PrimaryButton from '../components/PrimaryButton';
 import theme from '../theme';
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
     const navigation = useNavigation();
     
   return (
@@ -12,49 +12,44 @@ export default function LoginScreen() {
       {/* Section 1: Logo + Heading */}
       <View style={styles.section1}>
         <Image source={require('../assets/images/SecondaryLogo.png')} style={styles.logo} />
-        <Text style={theme.fonts.h2}>Welcome back! Glad to see you again!</Text>
+        <Text style={theme.fonts.h2}>Hello! Register to get started!</Text>
       </View>
 
       {/* Section 2: Input Fields */}
       <View style={styles.section2}>
+        <FormInput placeholder="Email" />
         <FormInput placeholder="Name" />
         <FormInput placeholder="Password" secureTextEntry={true} />
+        <FormInput placeholder="Confirm Password" secureTextEntry={true} />
       </View>
 
-      {/* Section 3: Forgot Password */}
+      {/* Section 3: Register Button */}
       <View style={styles.section3}>
-        <TouchableOpacity>
-          <Text style={[theme.fonts.ctaSec, { textAlign: 'right' }]}>Forgot password?</Text>
-        </TouchableOpacity>
+        <PrimaryButton title="Register" />
       </View>
 
-      {/* Section 4: Login Button */}
+      {/* Section 4: Or Register With */}
       <View style={styles.section4}>
-        <PrimaryButton title="Login" />
-      </View>
-
-      {/* Section 5: Or Login With */}
-      <View style={styles.section5}>
-        {/* Section 6: Divider */}
-        <View style={styles.section6}>
+        {/* Section 5: Divider */}
+        <View style={styles.section5}>
           <View style={styles.line} />
           <Text style={theme.fonts.body}>Or login with</Text>
           <View style={styles.line} />
         </View>
 
-        {/* Section 7: Socials */}
-        <View style={styles.section7}>
+        {/* Section 6: Socials */}
+        <View style={styles.section6}>
           <View style={styles.socialSquare}><Image source={require('../assets/images/facebook.png')} style={styles.socialIcon} /></View>
           <View style={styles.socialSquare}><Image source={require('../assets/images/google.png')} style={styles.socialIcon} /></View>
           <View style={styles.socialSquare}><Image source={require('../assets/images/apple.png')} style={styles.socialIcon} /></View>
         </View>
       </View>
 
-      {/* Section 8: Register Text */}
-      <View style={styles.section8}>
-        <Text style={theme.fonts.body}>Don’t have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen')}>
-          <Text style={[theme.fonts.ctaSec, { lineHeight: 1.25 }]}>Register</Text>
+      {/* Section 7: Login Text */}
+      <View style={styles.section7}>
+        <Text style={theme.fonts.body}>Already have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
+          <Text style={[theme.fonts.ctaSec, { lineHeight: 1.25 }]}>Login</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -92,16 +87,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   section3: {
-    marginVertical: 16,
-  },
-  section4: {
     marginBottom: 16,
     marginTop: 'auto',
   },
-  section5: {
+  section4: {
     marginVertical: 22,
   },
-  section6: {
+  section5: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -113,7 +105,7 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: theme.colors.darkBlue,
   },
-  section7: {
+  section6: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 8,
@@ -131,7 +123,7 @@ const styles = StyleSheet.create({
     height: 24,
     resizeMode: 'contain',
   },
-  section8: {
+  section7: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 8,
