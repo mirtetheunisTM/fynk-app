@@ -25,8 +25,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.darkBlue,
     paddingVertical: 14,
     borderRadius: 16,
-    width: 350,
+    width: '100%',
     height: 48,
+    alignSelf: 'stretch',
   },
 
   pressed: {

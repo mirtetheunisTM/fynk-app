@@ -27,7 +27,6 @@ const fonts = StyleSheet.create({
         fontFamily: 'Cabin',
         fontSize: 24,
         fontWeight: '600',
-        textAlign: 'center',
     },
     h3: {
         fontFamily: 'Inter',

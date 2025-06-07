@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import IntroScreen from '../screens/IntroScreen';
-console.log('IntroScreen:', IntroScreen);
+import LoginScreen from '../screens/LoginScreen';
 
 // Prevent auto hiding of splash until fonts are loaded
 SplashScreen.preventAutoHideAsync();
@@ -20,7 +20,8 @@ export default function App() {
 
   return (
     <Stack.Navigator initialRouteName="IntroScreen">
-      <Stack.Screen name="IntroScreen" component={IntroScreen} />
+      <Stack.Screen name="IntroScreen" component={IntroScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
