@@ -1,3 +1,7 @@
+/* Input values:
+    progress: number = progress of the progress bar (0-1)
+*/
+
 import { StyleSheet, View } from 'react-native';
 import theme from '../theme';
 

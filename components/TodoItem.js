@@ -1,3 +1,7 @@
+/* Adds a checkmark when clicked and a animated line trough the text 
+Input:
+  text: string = text of the todo item*/
+
 import { useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import theme from '../theme';
