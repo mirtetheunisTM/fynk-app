@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FormInput from '../components/FormInput';
 import PrimaryButton from '../components/PrimaryButton';
@@ -6,7 +7,12 @@ import theme from '../theme';
 
 export default function RegisterScreen() {
     const navigation = useNavigation();
-    
+
+    const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
   return (
     <View style={styles.container}>
       {/* Section 1: Logo + Heading */}
@@ -17,10 +23,10 @@ export default function RegisterScreen() {
 
       {/* Section 2: Input Fields */}
       <View style={styles.section2}>
-        <FormInput placeholder="Email" />
-        <FormInput placeholder="Name" />
-        <FormInput placeholder="Password" secureTextEntry={true} />
-        <FormInput placeholder="Confirm Password" secureTextEntry={true} />
+        <FormInput placeholder="Email" value={email} onChangeText={setEmail}/>
+        <FormInput placeholder="Name" value={name} onChangeText={setName}/>
+        <FormInput placeholder="Password" value={password} onChangeText={setPassword} isPassword={true} />
+        <FormInput placeholder="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} isPassword={true} />
       </View>
 
       {/* Section 3: Register Button */}

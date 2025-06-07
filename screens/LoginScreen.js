@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FormInput from '../components/FormInput';
 import PrimaryButton from '../components/PrimaryButton';
@@ -6,7 +7,10 @@ import theme from '../theme';
 
 export default function LoginScreen() {
     const navigation = useNavigation();
-    
+
+    const [name, setName] = useState('');
+    const [password, setPassword] = useState('');
+
   return (
     <View style={styles.container}>
       {/* Section 1: Logo + Heading */}
@@ -17,8 +21,8 @@ export default function LoginScreen() {
 
       {/* Section 2: Input Fields */}
       <View style={styles.section2}>
-        <FormInput placeholder="Name" />
-        <FormInput placeholder="Password" secureTextEntry={true} />
+        <FormInput placeholder="Name" value={name} onChangeText={setName}/>
+        <FormInput placeholder="Password" value={password} onChangeText={setPassword} isPassword={true} />
       </View>
 
       {/* Section 3: Forgot Password */}

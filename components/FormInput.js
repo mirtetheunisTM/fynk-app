@@ -50,11 +50,10 @@ export default function FormInput({
   };
 
   return (
-    <View style={[styles.wrapper, isFocused && styles.focused]}>
+    <View style={[styles.wrapper, isFocused && styles.focused, value && !isFocused && styles.filled]}>
       <Animated.Text style={labelStyle} pointerEvents="none">{placeholder}</Animated.Text>
       <TextInput
         style={styles.input}
-        placeholder={placeholder}
         placeholderTextColor="#727480"
         value={value}
         onChangeText={onChangeText}
@@ -82,6 +81,9 @@ const styles = StyleSheet.create({
   },
   focused: {
     borderColor: theme.colors.darkBlue,
+  },
+  filled: {
+    borderColor: 'rgba(28, 33, 51, 0.4)',
   },
   input: {
     fontSize: theme.fonts.body.fontSize,
