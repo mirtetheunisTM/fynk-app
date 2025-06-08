@@ -11,7 +11,7 @@ export default function IntroScreen() {
     <ImageBackground
         source={require('../assets/images/gradient.png')}
         resizeMode="cover"
-        flex={1}>
+        style={{ flex: 1 }}>
         <View style={styles.container}>
         {/* Section 1: Logo + H2 */}
         <View style={styles.section}>
