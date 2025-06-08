@@ -18,7 +18,11 @@ export default function RegisterScreen() {
       {/* Section 1: Logo + Heading */}
       <View style={styles.section1}>
         <Image source={require('../assets/images/SecondaryLogo.png')} style={styles.logo} />
-        <Text style={theme.fonts.h2}>Hello! Register to get started!</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={[theme.fonts.h2, { flexWrap: 'wrap' }]}>
+            Hello! Register to get started!
+          </Text>
+        </View>
       </View>
 
       {/* Section 2: Input Fields */}
@@ -55,7 +59,7 @@ export default function RegisterScreen() {
       <View style={styles.section7}>
         <Text style={theme.fonts.body}>Already have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-          <Text style={[theme.fonts.ctaSec, { lineHeight: 1.25 }]}>Login</Text>
+          <Text style={theme.fonts.ctaSec}>Login</Text>
         </TouchableOpacity>
       </View>
     </View>
