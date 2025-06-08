@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
@@ -7,6 +8,28 @@ import theme from '../theme';
 export default function HomeScreen() {
   const userName = 'Alexia';
   const progress = 0.75;
+
+  const [tasks, setTasks] = useState([]);
+  const [lastSession, setLastSession] = useState(null);
+
+  useEffect(() => {
+    // Dummy data now, replace with API call
+    const fetchData = async () => {
+      setTasks([
+        { id: 1, title: 'Design 4 : Ideate', due: '11.00 AM', color: theme.colors.pink },
+        { id: 2, title: 'Call Ella', due: '11.00 AM', color: theme.colors.lila },
+      ]);
+
+      setLastSession({
+        title: 'Beast Mode Session',
+        duration: '45 minutes',
+        date: '08-05',
+        image: require('../assets/images/mascottes/bodybuilder.png'),
+      });
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -30,46 +53,48 @@ export default function HomeScreen() {
         <View style={styles.cardHeader}>
           <Text style={theme.fonts.h3}>Your upcoming tasks</Text>
           <TouchableOpacity onPress={() => {}}>
-          <Text style={[theme.fonts.caption, { color: theme.colors.primaryPurple }, { fontWeight: 'bold' }]}>View All</Text>
+            <Text style={[theme.fonts.caption, { color: theme.colors.primaryPurple, fontWeight: 'bold' }]}>
+              View All
+            </Text>
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.task, { backgroundColor: theme.colors.pink }]}>
-          <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>Design 4 : Ideate</Text>
-          <View style={styles.dueBadge}>
-            <Text style={[theme.fonts.caption, { color: theme.colors.neutral }]}>Due 11.00 AM</Text>
+        {tasks.map((task) => (
+          <View key={task.id} style={[styles.task, { backgroundColor: task.color }]}>
+            <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>{task.title}</Text>
+            <View style={styles.dueBadge}>
+              <Text style={[theme.fonts.caption, { color: theme.colors.neutral }]}>Due {task.due}</Text>
+            </View>
           </View>
-        </View>
-
-        <View style={[styles.task, { backgroundColor: theme.colors.lila }]}>
-          <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>Call Ella</Text>
-          <View style={styles.dueBadge}>
-            <Text style={[theme.fonts.caption, { color: theme.colors.neutral }]}>Due 11.00 AM</Text>
-          </View>
-        </View>
+        ))}
       </View>
 
       {/* Last session */}
-      <View style={styles.card}>
-        <Text style={[theme.fonts.h3, { marginBottom: 8 }]}>Last session</Text>
-        <View style={styles.sessionRow}>
-          <Image source={require('../assets/images/mascottes/bodybuilder.png')} style={styles.sessionImage} />
-          <View style={styles.sessionColumn}>
-            <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>Beast Mode Session</Text>
-            <Text style={theme.fonts.caption}>45 minutes</Text>
+      {lastSession && (
+        <View style={styles.card}>
+          <Text style={[theme.fonts.h3, { marginBottom: 8 }]}>Last session</Text>
+          <View style={styles.sessionRow}>
+            <Image source={lastSession.image} style={styles.sessionImage} />
+            <View style={styles.sessionColumn}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>{lastSession.title}</Text>
+                <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{lastSession.date}</Text>
+              </View>
+              <Text style={theme.fonts.caption}>{lastSession.duration}</Text>
+            </View>
           </View>
-          <Text style={[theme.fonts.caption, { fontWeight: 'bold'}]}>08-05</Text>
         </View>
-      </View>
+      )}
 
       {/* Buttons */}
       <View style={styles.buttonRow}>
-        <SecondaryButton title="Customized session" style={{ flex: 1 }}/>
+        <SecondaryButton title="Customized session" style={{ flex: 1 }} />
         <PrimaryButton title="Start Session" style={{ flex: 1 }} />
       </View>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
