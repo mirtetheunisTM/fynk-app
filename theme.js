@@ -20,7 +20,7 @@ const fonts = StyleSheet.create({
         fontFamily: 'Cabin',
         fontSize: 28,
         fontWeight: '800',
-        lineHeight: 1.3,
+        //lineHeight: 1.3,
         letterSpacing: -1,
     },
     h2: {
@@ -37,14 +37,14 @@ const fonts = StyleSheet.create({
         fontFamily: 'Inter',
         fontSize: 16,
         fontWeight: '400',
-        lineHeight: 1.25,
+        //lineHeight: 1.25,
         color: '#1C2133',
     },
     caption: {
         fontFamily: 'Inter',
         fontSize: 12,
         fontWeight: '400',
-        lineHeight: 1.25,
+        //lineHeight: 1.25,
     },
     ctaPrim: {
         fontFamily: 'Cabin',
