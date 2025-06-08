@@ -6,13 +6,14 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 import theme from '../theme';
 
-export default function SecondaryButton({ title, onPress }) {
+export default function SecondaryButton({ title, onPress, style }) {
   return (
     <Pressable
           onPress={onPress}
           style={({ pressed }) => [
             styles.btn,
             pressed && styles.pressed,
+            style
           ]}
         >
           <Text style={theme.fonts.ctaSec}>{title}</Text>
@@ -27,8 +28,8 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.darkBlue,
     paddingVertical: 12,
     borderRadius: 16,
-    width: 350,
     height: 48,
+    alignSelf: 'stretch',
   },
 
   pressed: {

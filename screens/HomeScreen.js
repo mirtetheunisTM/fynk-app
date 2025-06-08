@@ -37,35 +37,35 @@ export default function HomeScreen() {
         <View style={[styles.task, { backgroundColor: theme.colors.pink }]}>
           <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>Design 4 : Ideate</Text>
           <View style={styles.dueBadge}>
-            <Text style={[theme.fonts.caption, { color: '#fff' }]}>Due 11.00 AM</Text>
+            <Text style={[theme.fonts.caption, { color: theme.colors.neutral }]}>Due 11.00 AM</Text>
           </View>
         </View>
 
         <View style={[styles.task, { backgroundColor: theme.colors.lila }]}>
           <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>Call Ella</Text>
           <View style={styles.dueBadge}>
-            <Text style={[theme.fonts.caption, { color: '#fff' }]}>Due 11.00 AM</Text>
+            <Text style={[theme.fonts.caption, { color: theme.colors.neutral }]}>Due 11.00 AM</Text>
           </View>
         </View>
       </View>
 
       {/* Last session */}
       <View style={styles.card}>
-        <Text style={theme.fonts.h3}>Last session</Text>
+        <Text style={[theme.fonts.h3, { marginBottom: 8 }]}>Last session</Text>
         <View style={styles.sessionRow}>
           <Image source={require('../assets/images/mascottes/bodybuilder.png')} style={styles.sessionImage} />
-          <View style={{ flex: 1 }}>
+          <View style={styles.sessionColumn}>
             <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>Beast Mode Session</Text>
             <Text style={theme.fonts.caption}>45 minutes</Text>
           </View>
-          <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>08-05</Text>
+          <Text style={[theme.fonts.caption, { fontWeight: 'bold'}]}>08-05</Text>
         </View>
       </View>
 
       {/* Buttons */}
       <View style={styles.buttonRow}>
-        <SecondaryButton title="Customized session" />
-        <PrimaryButton title="Start Session" />
+        <SecondaryButton title="Customized session" style={{ flex: 1 }}/>
+        <PrimaryButton title="Start Session" style={{ flex: 1 }} />
       </View>
     </View>
   );
@@ -118,11 +118,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 24,
   },
   task: {
     borderRadius: 12,
-    paddingVertical: 12,
+    paddingVertical: 16,
     paddingHorizontal: 16,
     marginBottom: 12,
     flexDirection: 'row',
@@ -130,9 +130,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dueBadge: {
-    backgroundColor: '#1C1C1E',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    backgroundColor: theme.colors.darkBlue,
+    paddingHorizontal: 8,
+    paddingVertical: 12,
     borderRadius: 8,
   },
   sessionRow: {
@@ -141,9 +141,14 @@ const styles = StyleSheet.create({
     marginTop: 12,
     gap: 12,
   },
+  sessionColumn: {
+    flex: 1,
+    flexDirection: 'column',
+    gap: 24,
+  },
   sessionImage: {
-    width: 48,
-    height: 48,
+    width: 52,
+    height: 52,
     resizeMode: 'contain',
     marginRight: 12,
   },

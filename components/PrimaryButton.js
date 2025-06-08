@@ -6,13 +6,14 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 import theme from '../theme';
 
-export default function PrimaryButton({ title, onPress }) {
+export default function PrimaryButton({ title, onPress, style }) {
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
         styles.btn,
         pressed && styles.pressed,
+        style
       ]}
     >
       <Text style={theme.fonts.ctaPrim}>{title}</Text>
@@ -25,7 +26,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.darkBlue,
     paddingVertical: 14,
     borderRadius: 16,
-    width: '100%',
     height: 48,
     alignSelf: 'stretch',
   },
