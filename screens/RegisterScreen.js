@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 20,
     paddingHorizontal: 24,
+    backgroundColor: theme.colors.neutral,
     justifyContent: 'space-between',
   },
   section1: {

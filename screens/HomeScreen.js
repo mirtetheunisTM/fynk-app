@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
@@ -6,6 +7,8 @@ import SecondaryButton from '../components/SecondaryButton';
 import theme from '../theme';
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
+
   const userName = 'Alexia';
   const progress = 0.75;
 
@@ -89,7 +92,7 @@ export default function HomeScreen() {
       {/* Buttons */}
       <View style={styles.buttonRow}>
         <SecondaryButton title="Customized session" style={{ flex: 1 }} />
-        <PrimaryButton title="Start Session" style={{ flex: 1 }} />
+        <PrimaryButton title="Start Session" style={{ flex: 1 }} onPress={() => navigation.navigate('ChooseSession')} />
       </View>
     </View>
   );
@@ -157,7 +160,7 @@ const styles = StyleSheet.create({
   dueBadge: {
     backgroundColor: theme.colors.darkBlue,
     paddingHorizontal: 8,
-    paddingVertical: 12,
+    paddingVertical: 8,
     borderRadius: 8,
   },
   sessionRow: {
@@ -169,7 +172,7 @@ const styles = StyleSheet.create({
   sessionColumn: {
     flex: 1,
     flexDirection: 'column',
-    gap: 24,
+    gap: 16,
   },
   sessionImage: {
     width: 52,

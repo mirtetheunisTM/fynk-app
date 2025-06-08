@@ -124,14 +124,13 @@ const styles = StyleSheet.create({
   },
   focusTitle: {
     marginBottom: 12,
-    textAlign: 'center',
   },
   tags: {
     flexDirection: 'row',
     gap: 8,
     marginBottom: 16,
     flexWrap: 'wrap',
-    justifyContent: 'center',
+    justifyContent: 'left',
   },
   tag: {
     backgroundColor: '#EFE6FF',
@@ -141,7 +140,6 @@ const styles = StyleSheet.create({
     color: theme.colors.darkBlue,
   },
   description: {
-    textAlign: 'center',
     paddingHorizontal: 16,
     marginBottom: 24,
   },
