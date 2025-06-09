@@ -2,8 +2,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import MainTabs from '../mainTabs';
-import ChooseSessionScreen from '../screens/ChooseSessionScreen';
-import ChooseTasksScreen from '../screens/ChooseTasksScreen';
 import HomeScreen from '../screens/HomeScreen';
 import IntroScreen from '../screens/IntroScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -27,12 +25,10 @@ export default function App() {
   return (
     <Stack.Navigator initialRouteName="IntroScreen">
       <Stack.Screen name="Playground" component={PlaygroundScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="ChooseSession" component={ChooseSessionScreen} options={{ headerShown: false }} />
       <Stack.Screen name="IntroScreen" component={IntroScreen} options={{ headerShown: false }} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="ChooseTasks" component={ChooseTasksScreen} options={{ headerShown: false }} />
       <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
