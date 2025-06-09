@@ -104,6 +104,7 @@ export default function HomeScreen() {
         <SecondaryButton title="Customized session" style={{ flex: 1 }} />
         <PrimaryButton title="Start Session" style={{ flex: 1 }} onPress={() => navigation.navigate('ChooseTasks')} />
       </View>
+
     </View>
   );
 }
