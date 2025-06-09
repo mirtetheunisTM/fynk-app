@@ -9,7 +9,7 @@ export default function SearchBar() {
         style={styles.icon}
         resizeMode="contain"
       />
-      <Text style={styles.placeholder}>Search</Text>
+      <Text style={[theme.fonts.body, styles.placeholder]}>Search</Text>
     </View>
   );
 };
@@ -22,9 +22,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 15,
     paddingVertical: 15,
-    marginHorizontal: 16,
-    marginBottom: 16,
-    alignSelf: 'stretch',
+    alignSelf: 'left',
+    width: '100%',
   },
   icon: {
     width: 24,
