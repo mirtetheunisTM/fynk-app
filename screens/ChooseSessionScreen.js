@@ -148,7 +148,7 @@ export default function ChooseSessionScreen() {
       ))}
     </View>
 
-    <PrimaryButton title="Next step" onPress={() => {}} style={styles.button} />
+    <PrimaryButton title="Start Session" onPress={() => {}} style={styles.button} />
   </View>
 );
 }
