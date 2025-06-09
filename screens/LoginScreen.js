@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FormInput from '../components/FormInput';
@@ -13,6 +14,15 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Background gradient */}
+      <LinearGradient
+          colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
+          locations={[0, 0.6, 0.9, 1]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={styles.gradientBackground}
+        />
+
       {/* Section 1: Logo + Heading */}
       <View style={styles.section1}>
         <Image source={require('../assets/images/SecondaryLogo.png')} style={styles.logo} />
@@ -70,8 +80,15 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
+  gradientBackground: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.2,
+    zIndex: 0,
+  },
   container: {
     flex: 1,
+    backgroundColor: theme.colors.neutral,
+    position: 'relative',
     paddingTop: 40,
     paddingBottom: 20,
     paddingHorizontal: 24,

@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRef, useState } from 'react';
 import { Dimensions, FlatList, Image, StyleSheet, Text, View, } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
@@ -78,76 +79,92 @@ export default function ChooseSessionScreen() {
   }).current;
 
   return (
-    <View style={styles.container}>
-      <Text style={[theme.fonts.h1, styles.title]}>
-        Choose your FocusMode
-      </Text>
+  <View style={styles.container}>
+    {/* Background gradient */}
+    <LinearGradient
+      colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
+      locations={[0, 0.6, 0.9, 1]}
+      start={{ x: 0.5, y: 0 }}
+      end={{ x: 0.5, y: 1 }}
+      style={styles.gradientBackground}
+    />
 
-      <FlatList
-        data={focusModes}
-        horizontal
-        pagingEnabled
-        snapToInterval={width}
-        ref={flatListRef}
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={viewConfigRef}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Image source={item.image} style={styles.image} />
-            <Text style={[theme.fonts.h2, styles.focusTitle]}>{item.title}</Text>
-            <View style={styles.tags}>
-              {item.tags.map((tag, idx) => (
-                <Text
-                  key={idx}
-                  style={[
-                    theme.fonts.caption,
-                    styles.tag,
-                    { fontWeight: 'bold' },
-                    getTagStyle(tag, idx)
-                  ]}
-                >
-                  {tag}
-                </Text>
-              ))}
-            </View>
-            <Text style={[theme.fonts.body, styles.description]}>
-              {item.description}
-            </Text>
+    <Text style={[theme.fonts.h1, styles.title]}>
+      Choose your FocusMode
+    </Text>
+
+    {/* Carousel */}
+    <FlatList
+      data={focusModes}
+      horizontal
+      pagingEnabled
+      snapToInterval={width}
+      ref={flatListRef}
+      showsHorizontalScrollIndicator={false}
+      keyExtractor={(item) => item.id}
+      onViewableItemsChanged={onViewableItemsChanged}
+      viewabilityConfig={viewConfigRef}
+      renderItem={({ item }) => (
+        <View style={styles.card}>
+          <Image source={item.image} style={styles.image} />
+          <Text style={[theme.fonts.h2, styles.focusTitle]}>{item.title}</Text>
+          <View style={styles.tags}>
+            {item.tags.map((tag, idx) => (
+              <Text
+                key={idx}
+                style={[
+                  theme.fonts.caption,
+                  styles.tag,
+                  { fontWeight: 'bold' },
+                  getTagStyle(tag, idx),
+                ]}
+              >
+                {tag}
+              </Text>
+            ))}
           </View>
-        )}
-      />
+          <Text style={[theme.fonts.body, styles.description]}>
+            {item.description}
+          </Text>
+        </View>
+      )}
+    />
 
-      {/* Pagination Dots */}
-      <View style={styles.pagination}>
-        {focusModes.map((_, idx) => (
-          <View
-            key={idx}
-            style={[
-              styles.dot,
-              {
-                backgroundColor:
-                  idx === currentIndex
-                    ? theme.colors.darkBlue
-                    : theme.colors.lila,
-              },
-            ]}
-          />
-        ))}
-      </View>
-
-      <PrimaryButton title="Next step" onPress={() => {}} style={styles.button} />
+    {/* Pagination */}
+    <View style={styles.pagination}>
+      {focusModes.map((_, idx) => (
+        <View
+          key={idx}
+          style={[
+            styles.dot,
+            {
+              backgroundColor:
+                idx === currentIndex
+                  ? theme.colors.darkBlue
+                  : theme.colors.lila,
+            },
+          ]}
+        />
+      ))}
     </View>
-  );
+
+    <PrimaryButton title="Next step" onPress={() => {}} style={styles.button} />
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
+  gradientBackground: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.2,
+    zIndex: 0,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral,
     paddingTop: 60,
     alignItems: 'center',
+    position: 'relative', 
   },
   title: {
     marginBottom: 24,

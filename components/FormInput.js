@@ -37,7 +37,7 @@ export default function FormInput({
     left: 16,
     top: animatedLabel.interpolate({
       inputRange: [0, 1],
-      outputRange: [14, -7], 
+      outputRange: [16, -7], 
     }),
     fontSize: animatedLabel.interpolate({
       inputRange: [0, 1],
