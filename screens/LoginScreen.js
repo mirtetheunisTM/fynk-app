@@ -48,7 +48,7 @@ export default function LoginScreen() {
 
       {/* Section 4: Login Button */}
       <View style={styles.section4}>
-        <PrimaryButton title="Login" onPress={() => navigation.navigate('HomeScreen')}/>
+        <PrimaryButton title="Login" onPress={() => navigation.replace('MainTabs')}/>
       </View>
 
       {/* Section 5: Or Login With */}

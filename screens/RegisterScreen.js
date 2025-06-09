@@ -45,7 +45,7 @@ export default function RegisterScreen() {
 
       {/* Section 3: Register Button */}
       <View style={styles.section3}>
-        <PrimaryButton title="Register" onPress={() => navigation.navigate('HomeScreen')}/>
+        <PrimaryButton title="Register" onPress={() => navigation.replace('MainTabs')}/>
       </View>
 
       {/* Section 4: Or Register With */}

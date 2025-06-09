@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import MainTabs from '../mainTabs';
 import ChooseSessionScreen from '../screens/ChooseSessionScreen';
 import ChooseTasksScreen from '../screens/ChooseTasksScreen';
 import HomeScreen from '../screens/HomeScreen';
@@ -32,6 +33,7 @@ export default function App() {
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="ChooseTasks" component={ChooseTasksScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
