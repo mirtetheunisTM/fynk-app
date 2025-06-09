@@ -10,7 +10,7 @@ const focusModes = [
     id: '1',
     image: require('../assets/images/mascottes/ticktock.png'), 
     title: 'Tick Tock',
-    tags: ['Recommended', 'Timer', 'Pomodoro'],
+    tags: ['Timer', 'Pomodoro', 'Recommended'],
     description:
       'Work for 25 minutes, break for 5. Rinse and repeat until you finally finish something. Perfect for people who can’t focus longer than a goldfish.',
   },
@@ -20,9 +20,50 @@ const focusModes = [
     title: 'Monk Mode',
     tags: ['Timer', 'Deepwork'],
     description:
-      '90 minutes of work, 20 minutes break.Longer block to get into zen mode/flow state. Medium active break to reset.',
+      '90 minutes of work, 20 minutes break. Longer block to get into zen mode/flow state. Medium active break to reset.',
+  },
+  {
+    id: '3',
+    image: require('../assets/images/mascottes/todoordie.png'), 
+    title: 'To Do or Die',
+    tags: ['Taskbased', 'Deepwork'],
+    description:
+      'Pick one task. Just one. Then work on it until it’s done. No timers, no breaks, no escape. It’s you vs. the to-do. Winner takes all.',
+  },
+  {
+    id: '4',
+    image: require('../assets/images/mascottes/beastmode.png'), 
+    title: 'Beast Mode',
+    tags: ['Taskbased', 'Eat the frog'],
+    description:
+      'Do the hardest, most annoying task first. Stop crying about it. Rip the Band-Aid off and move on with your life.',
+  },
+  {
+    id: '5',
+    image: require('../assets/images/mascottes/workhardchillharder.png'), 
+    title: 'Work Hard, Chill Harder',
+    tags: ['Timer', 'Habit-forming'],
+    description:
+      'Work for 30 minutes, followed by a well-deserved 30-minute break. Done is better than perfect. At least you’re doing something.',
+  },
+  {
+    id: '6',
+    image: require('../assets/images/mascottes/figureitout.png'), 
+    title: 'Figure It Out',
+    tags: ['Timer', 'Custom'],
+    description:
+      'Pick your own focus time and breaks. Want a 5-minute work session with a 3-hour break? Go ahead. See where that gets you.',
   },
 ];
+
+const getTagStyle = (tag, idx) => {
+  if (tag.toLowerCase() === 'recommended') {
+    return { backgroundColor: theme.colors.lila };
+  }
+  if (idx === 0) return { backgroundColor: theme.colors.pink };
+  if (idx === 1) return { backgroundColor: theme.colors.primaryPurple };
+  return { backgroundColor: theme.colors.lightPurple };
+};
 
 export default function ChooseSessionScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -46,6 +87,7 @@ export default function ChooseSessionScreen() {
         data={focusModes}
         horizontal
         pagingEnabled
+        snapToInterval={width}
         ref={flatListRef}
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}
@@ -63,6 +105,7 @@ export default function ChooseSessionScreen() {
                     theme.fonts.caption,
                     styles.tag,
                     { fontWeight: 'bold' },
+                    getTagStyle(tag, idx)
                   ]}
                 >
                   {tag}
@@ -104,48 +147,49 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.neutral,
     paddingTop: 60,
-    paddingHorizontal: 24,
     alignItems: 'center',
   },
   title: {
-    marginBottom: 32,
+    marginBottom: 24,
     textAlign: 'center',
   },
   card: {
-    width: width - 48,
+    width: width,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 16,
   },
   image: {
-    width: 220,
-    height: 220,
+    width: 280,
+    height: 280,
     resizeMode: 'contain',
     marginBottom: 24,
   },
   focusTitle: {
-    marginBottom: 12,
+    marginBottom: 24,
+    alignSelf: 'left',
   },
   tags: {
     flexDirection: 'row',
     gap: 8,
-    marginBottom: 16,
+    marginBottom: 8,
     flexWrap: 'wrap',
-    justifyContent: 'left',
+    alignSelf: 'left',
   },
   tag: {
     backgroundColor: '#EFE6FF',
     borderRadius: 12,
-    paddingVertical: 4,
-    paddingHorizontal: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
     color: theme.colors.darkBlue,
   },
   description: {
-    paddingHorizontal: 16,
     marginBottom: 24,
   },
   pagination: {
     flexDirection: 'row',
     gap: 8,
+    marginTop: -24,
     marginBottom: 24,
   },
   dot: {
@@ -154,7 +198,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   button: {
-    alignSelf: 'stretch',
+    width: width - 32,
+    alignSelf: 'center',
     marginBottom: 40,
   },
 });
