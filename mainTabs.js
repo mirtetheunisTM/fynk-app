@@ -4,10 +4,10 @@ import { View } from 'react-native';
 import theme from './theme';
 
 import HomeStackNavigator from './navigation/HomeStack';
+import ShopStackNavigator from './navigation/ShopStack';
 import BraindumpScreen from './screens/BraindumpScreen';
 import FriendsScreen from './screens/FriendsScreen';
 import ProfileScreen from './screens/ProfileScreen';
-import ShopScreen from './screens/ShopScreen';
 
 // Import your custom SVG icons
 import BraindumpIcon from './assets/icons/BraindumpIcon';
@@ -51,7 +51,7 @@ export default function MainTabs() {
       <Tab.Screen name="Home" component={HomeStackNavigator} />
       <Tab.Screen name="Braindump" component={BraindumpScreen} />
       <Tab.Screen name="Friends" component={FriendsScreen} />
-      <Tab.Screen name="Shop" component={ShopScreen} />
+      <Tab.Screen name="Shop" component={ShopStackNavigator} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
