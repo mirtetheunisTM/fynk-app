@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
@@ -7,6 +8,9 @@ import ProgressBar from '../components/ProgressBar';
 import SecondaryButton from '../components/SecondaryButton';
 import theme from '../theme';
 
+const TASKS_API_URL = "https://fynk-backend.onrender.com/tasks";
+const SESSION_API_URL = "https://fynk-backend.onrender.com/sessions/last";
+
 export default function HomeScreen() {
   const navigation = useNavigation();
 
@@ -15,25 +19,122 @@ export default function HomeScreen() {
 
   const [tasks, setTasks] = useState([]);
   const [lastSession, setLastSession] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Dummy data now, replace with API call
-    const fetchData = async () => {
-      setTasks([
-        { id: 1, title: 'Design 4 : Ideate', due: '11.00 AM', color: theme.colors.pink },
-        { id: 2, title: 'Call Ella', due: '11.00 AM', color: theme.colors.lila },
-      ]);
+        const fetchData = async () => {
+          setError('');
+            try {
+                const token = await AsyncStorage.getItem("authToken");
 
-      setLastSession({
-        title: 'Beast Mode Session',
-        duration: '45 minutes',
-        date: '08-05',
-        image: require('../assets/images/mascottes/bodybuilder.png'),
-      });
+                if (!token) {
+                    setError("Geen token gevonden. Log in opnieuw.");
+                    setLoading(false);
+                    return;
+                }
+
+                // Taken ophalen
+                const tasksResponse = await fetch(TASKS_API_URL, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                const tasksData = await tasksResponse.json();
+
+                if (tasksResponse.ok) {
+                    const allTasks = tasksData.data || [];
+                    console.log(allTasks);
+
+                    // Taken sorteren op due date
+                    allTasks.sort((a, b) => new Date(a.due) - new Date(b.due));
+
+                    // Slechts de twee eerstvolgende taken selecteren
+                    const filteredTasks = allTasks.slice(0, 2).map(task => ({
+                        ...task,
+                        due_date: formatDate(task.due_date),
+                        color: getTaskColor(task.urgency_type),
+                    }));
+
+                    setTasks(filteredTasks);
+                } else {
+                    setError("Fout bij het ophalen van taken.");
+                }
+
+                // Last session ophalen
+                const sessionResponse = await fetch(SESSION_API_URL, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                const sessionData = await sessionResponse.json();
+
+                if (sessionResponse.ok) {
+                    setLastSession({
+                      ...sessionData.data,
+                      date: formatDate(sessionData.data.start_time),
+                   });
+                   console.log(lastSession);
+                } else {
+                    setError("Fout bij het ophalen van de laatste sessie.");
+                }
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const getTaskColor = (urgency_type) => {
+        switch (urgency_type) {
+            case "Deadline Drama": return theme.colors.pink;
+            case "Future Me Problem": return theme.colors.lightPurple;
+            case "Quick Fix": return theme.colors.lila;
+            case "Nice, not necessary": return theme.colors.neutral;
+            default: return theme.colors.creme;
+        }
     };
 
-    fetchData();
-  }, []);
+    const getFocusMode = (focus_mode_id) => {
+        focus_mode_id = Number(focus_mode_id);
+        switch (focus_mode_id) {
+            case 1: return "Tick Tock";
+            case 2: return "Monk Mode";
+            case 3: return "To Do or Die";
+            case 4: return "Beast Mode";
+            case 5: return "Work Hard, Chill Harder";
+            case 6: return "Figure It Out";
+            default: return "No Focus Mode";
+        }
+    };
+
+    const getFocusModeImage = (focus_mode_id) => {
+        focus_mode_id = Number(focus_mode_id);
+        switch (focus_mode_id) {
+            case 1: return require('../assets/images/mascottes/ticktock.png');
+            case 2: return require('../assets/images/mascottes/monkmode.png');
+            case 3: return require('../assets/images/mascottes/todoordie.png');
+            case 4: return require('../assets/images/mascottes/beastmode.png');
+            case 5: return require('../assets/images/mascottes/workhardchillharder.png');
+            case 6: return require('../assets/images/mascottes/figureitout.png');
+            default: return require('../assets/images/mascottes/ticktock.png');
+        }
+    };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("nl-NL", { day: "2-digit", month: "2-digit" });
+    };
+    console.log(error);
 
   return (
     <View style={styles.container}>
@@ -65,7 +166,7 @@ export default function HomeScreen() {
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={theme.fonts.h3}>Your upcoming tasks</Text>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={() => {navigation.navigate('MainTabs/Braindump');}}>
             <Text style={[theme.fonts.caption, { color: theme.colors.primaryPurple, fontWeight: 'bold' }]}>
               View All
             </Text>
@@ -76,7 +177,7 @@ export default function HomeScreen() {
           <View key={task.id} style={[styles.task, { backgroundColor: task.color }]}>
             <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>{task.title}</Text>
             <View style={styles.dueBadge}>
-              <Text style={[theme.fonts.caption, { color: theme.colors.neutral }]}>Due {task.due}</Text>
+              <Text style={[theme.fonts.caption, { color: theme.colors.neutral }]}>Due {task.due_date}</Text>
             </View>
           </View>
         ))}
@@ -87,13 +188,13 @@ export default function HomeScreen() {
         <View style={styles.card}>
           <Text style={[theme.fonts.h3, { marginBottom: 8 }]}>Last session</Text>
           <View style={styles.sessionRow}>
-            <Image source={lastSession.image} style={styles.sessionImage} />
+            <Image source={getFocusModeImage(lastSession.focus_mode_id)} style={styles.sessionImage} />
             <View style={styles.sessionColumn}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>{lastSession.title}</Text>
+                <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>{getFocusMode(lastSession.focus_mode_id)}</Text>
                 <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{lastSession.date}</Text>
               </View>
-              <Text style={theme.fonts.caption}>{lastSession.duration}</Text>
+              <Text style={theme.fonts.caption}>{lastSession.duration ? lastSession.duration : 'No duration known'}</Text>
             </View>
           </View>
         </View>

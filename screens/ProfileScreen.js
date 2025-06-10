@@ -1,12 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import {
-    Image,
-    StyleSheet,
-    Text,
-    View
+  Image,
+  StyleSheet,
+  Text,
+  View
 } from 'react-native';
 
+import { LinearGradient } from 'expo-linear-gradient';
 import ProgressBar from '../components/ProgressBar';
 import SessionCard from '../components/SessionCard';
 import ShopTabs from '../components/ShopTabs';
@@ -36,6 +37,15 @@ export default function AccountScreen() {
 
   return (
     <View style={styles.container}>
+        {/* Background gradient */}
+        <LinearGradient
+          colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
+          locations={[0, 0.6, 0.9, 1]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={styles.gradientBackground}
+        />
+
         {/* Header */}
         <View style={styles.header}>
           <Text style={theme.fonts.h1}>Account</Text>
@@ -111,9 +121,15 @@ export default function AccountScreen() {
 }
 
 const styles = StyleSheet.create({
+  gradientBackground: {
+		...StyleSheet.absoluteFillObject,
+		opacity: 0.2,
+		zIndex: 0,
+	},
   container: {
     flex: 1,
     backgroundColor: theme.colors.neutral,
+    position: 'relative',
     paddingTop: 60,
     paddingHorizontal: 16,
   },

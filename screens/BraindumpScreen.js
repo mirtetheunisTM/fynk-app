@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import PrimaryButton from "../components/PrimaryButton";
@@ -18,11 +19,6 @@ export default function BraindumpScreen() {
 	const [tasks, setTasks] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-
-	const getToken = async () => {
-		const token = await AsyncStorage.getItem("authToken");
-		return token;
-	};
 
 	useEffect(() => {
         const fetchTasks = async () => {
@@ -66,6 +62,15 @@ export default function BraindumpScreen() {
 
 	return (
 		<View style={styles.container}>
+			{/* Background gradient */}
+			<LinearGradient
+				colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
+				locations={[0, 0.6, 0.9, 1]}
+				start={{ x: 0.5, y: 0 }}
+				end={{ x: 0.5, y: 1 }}
+				style={styles.gradientBackground}
+			/>
+
 			<Text style={[theme.fonts.h1, { marginBottom: 8 }]}>Brain Dump</Text>
 			<Text style={[theme.fonts.h3, { marginBottom: 24 }]}>Your todo list</Text>
 			{loading && <ActivityIndicator size="large" color={theme.colors.primaryPurple} />}
@@ -96,9 +101,15 @@ export default function BraindumpScreen() {
 }
 
 const styles = StyleSheet.create({
+	gradientBackground: {
+		...StyleSheet.absoluteFillObject,
+		opacity: 0.2,
+		zIndex: 0,
+	},
 	container: {
 		flex: 1,
-		backgroundColor: "#F8F9FF",
+		backgroundColor: theme.colors.neutral,
+		position: 'relative',
 		paddingHorizontal: 20,
 		paddingTop: 48,
 	},
