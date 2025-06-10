@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import theme from "../theme";
 import TodoItemComplete from "./TodoItemComplete";
 
-export default function TaskDropdown({ title, priority, color }) {
+export default function TaskDropdown({ title, color, tasks = [] }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -15,9 +15,14 @@ export default function TaskDropdown({ title, priority, color }) {
         activeOpacity={0.8}
       >
         <Text style={[theme.fonts.h3, styles.taskTitle]}>{title}</Text>
-        <View style={styles.priorityBadge}>
-          <Text style={theme.fonts.caption}>{priority}</Text>
-        </View>
+        {/* Optioneel: Toon een badge met prioriteit van de eerste taak */}
+        {tasks.length > 0 && (
+          <View style={styles.priorityBadge}>
+            <Text style={styles.priorityText}>
+              {tasks[0].importance ? capitalize(tasks[0].importance) : "Medium"}
+            </Text>
+          </View>
+        )}
         <Feather
           name={open ? "chevron-up" : "chevron-down"}
           size={24}
@@ -27,11 +32,25 @@ export default function TaskDropdown({ title, priority, color }) {
       </TouchableOpacity>
       {open && (
         <View style={styles.dropdownContent}>
-          <TodoItemComplete text={"Shop for twenty minutes."}/>
+          {tasks.length === 0 ? (
+            <Text style={theme.fonts.body}>Geen taken in deze categorie.</Text>
+          ) : (
+            tasks.map((task) => (
+              <View key={task.id}>
+                <TodoItemComplete text={task.title} />
+              </View>
+            ))
+          )}
         </View>
       )}
     </View>
   );
+}
+
+// Helper functie om hoofdletter te maken
+function capitalize(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
 const styles = StyleSheet.create({
@@ -46,12 +65,13 @@ const styles = StyleSheet.create({
   },
   taskTitle: {
     flex: 1,
+    color: "#1C2133",
   },
   priorityBadge: {
     backgroundColor: theme.colors.creme,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
     marginLeft: 8,
   },
   priorityText: {
@@ -61,5 +81,6 @@ const styles = StyleSheet.create({
   },
   dropdownContent: {
     marginTop: 16,
+    gap: 12,
   },
 });
