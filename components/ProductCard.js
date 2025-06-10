@@ -1,9 +1,16 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import theme from "../theme";
 
-export default function ProductCard({ image, title, description, price }) {
+export default function ProductCard({ image, title, description, price, ...rest }) {
+  const navigation = useNavigation();
+
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate("ProductDetail", { product: { image, title, description, price, ...rest } })}
+      activeOpacity={0.9}
+    >
       <Image source={image} style={styles.img} />
       <View style={styles.info}>
         <Text style={[theme.fonts.body, styles.title]}>{title}</Text>
@@ -11,9 +18,9 @@ export default function ProductCard({ image, title, description, price }) {
       </View>
       <View style={styles.priceWrapper}>
         <Text style={[theme.fonts.body, styles.price]}>{price}</Text>
-      <Image source={require("../assets/icons/CoinIcon.png")} style={styles.coin} />
+        <Image source={require("../assets/icons/CoinIcon.png")} style={styles.coin} />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -28,8 +35,8 @@ const styles = StyleSheet.create({
    
   },
   img: {
-    width: 64,
-    height: 64,
+    width: 100,
+    height: 100,
     marginBottom: 8,
     resizeMode: "contain",
     backgroundColor: "#F1F1F1",
