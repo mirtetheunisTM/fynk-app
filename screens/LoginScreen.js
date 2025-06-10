@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
@@ -6,11 +7,44 @@ import FormInput from '../components/FormInput';
 import PrimaryButton from '../components/PrimaryButton';
 import theme from '../theme';
 
+const API_URL = "https://fynk-backend.onrender.com/auth/login";
+
 export default function LoginScreen() {
     const navigation = useNavigation();
 
-    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleLogin = async () => {
+        setErrorMessage(''); // Clear previous errors
+
+        if (!email || !password) {
+            setErrorMessage("Please enter both email and password.");
+            return;
+        }
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.token) {
+                await AsyncStorage.setItem("authToken", data.token);
+                navigation.replace("MainTabs");
+            } else {
+                setErrorMessage("Invalid email or password.");
+            }
+        } catch (error) {
+            setErrorMessage(error.message);
+        }
+    };
 
   return (
     <View style={styles.container}>
@@ -33,9 +67,12 @@ export default function LoginScreen() {
         </View>
       </View>
 
+      {/* Error Message */}
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
       {/* Section 2: Input Fields */}
       <View style={styles.section2}>
-        <FormInput placeholder="Name" value={name} onChangeText={setName}/>
+        <FormInput placeholder="Email" value={email} onChangeText={setEmail}/>
         <FormInput placeholder="Password" value={password} onChangeText={setPassword} isPassword={true} />
       </View>
 
@@ -48,7 +85,7 @@ export default function LoginScreen() {
 
       {/* Section 4: Login Button */}
       <View style={styles.section4}>
-        <PrimaryButton title="Login" onPress={() => navigation.replace('MainTabs')}/>
+        <PrimaryButton title="Login" onPress={handleLogin}/>
       </View>
 
       {/* Section 5: Or Login With */}
@@ -93,6 +130,11 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingHorizontal: 24,
     justifyContent: 'space-between',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 16,
   },
   section1: {
     flexDirection: 'row',
