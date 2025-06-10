@@ -5,14 +5,14 @@ import TaskDropdown from "../components/TasksDropDown";
 import theme from "../theme";
 
 const CATEGORIES = [
-	{ id: "1", title: "Deadline Drama", color: theme.colors.pink },
-	{ id: "2", title: "Future me problem", color: theme.colors.primaryPurple },
-	{ id: "3", title: "Quick fix", color: theme.colors.lila },
-	{ id: "4", title: "Nice, not necessary", color: theme.colors.creme },
+	{ id: "1", title: "Deadline Drama", color: theme.colors.pink, priority: "High" },
+	{ id: "2", title: "Future me problem", color: theme.colors.primaryPurple, priority: "Medium" },
+	{ id: "3", title: "Quick fix", color: theme.colors.lila, priority: "Medium" },
+	{ id: "4", title: "Nice, not necessary", color: theme.colors.creme, priority: "Low" },
 ];
 
 const API_URL = "https://fynk-backend.onrender.com/tasks";
-const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiZW1haWwiOiJhbGljZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0OTU1OTMzNywiZXhwIjoxNzQ5NTYyOTM3fQ.izoJm3p5puduWefFP6JugJnvuKb-udGBQnBgPzuyoAU";
+const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiZW1haWwiOiJhbGljZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0OTU2NTg1NSwiZXhwIjoxNzQ5NTY5NDU1fQ.1o_ME6dnaAm9rgGXH0XS_rfw25m5wgwMi-JYeen1q54";
 
 export default function BraindumpScreen() {
 	const [tasks, setTasks] = useState([]);
@@ -29,6 +29,7 @@ export default function BraindumpScreen() {
 		})
 			.then(res => res.json())
 			.then(data => {
+				console.log("API response:", data);
 				setTasks(data.data || []);
 				setLoading(false);
 			})
@@ -38,9 +39,8 @@ export default function BraindumpScreen() {
 			});
 	}, []);
 
-	// Helper: taken per categorie filteren
-	const getTasksForCategory = (categoryTitle) =>
-		tasks.filter(task => (task.category || "").toLowerCase() === categoryTitle.toLowerCase());
+	const getTasksForCategory = (categoryId) =>
+	  tasks.filter(task => task.category_id === categoryId);
 
 	return (
 		<View style={styles.container}>
@@ -56,8 +56,8 @@ export default function BraindumpScreen() {
 						<TaskDropdown
 							title={category.title}
 							color={category.color}
-							// Geef de taken van deze categorie door als prop
-							tasks={getTasksForCategory(category.title)}
+							priority={category.priority} // <-- priority altijd meegeven!
+							tasks={getTasksForCategory(category.id)}
 						/>
 					)}
 					contentContainerStyle={{ gap: 16, marginBottom: 32 }}

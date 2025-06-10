@@ -4,7 +4,14 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import theme from "../theme";
 import TodoItemComplete from "./TodoItemComplete";
 
-export default function TaskDropdown({ title, color, tasks = [] }) {
+const importanceLabels = {
+  1: "Low",
+  2: "Medium",
+  3: "High",
+  4: "Critical",
+};
+
+export default function TaskDropdown({ title, color, tasks = [], priority }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -15,14 +22,9 @@ export default function TaskDropdown({ title, color, tasks = [] }) {
         activeOpacity={0.8}
       >
         <Text style={[theme.fonts.h3, styles.taskTitle]}>{title}</Text>
-        {/* Optioneel: Toon een badge met prioriteit van de eerste taak */}
-        {tasks.length > 0 && (
-          <View style={styles.priorityBadge}>
-            <Text style={styles.priorityText}>
-              {tasks[0].importance ? capitalize(tasks[0].importance) : "Medium"}
-            </Text>
-          </View>
-        )}
+        <View style={styles.priorityBadge}>
+          <Text style={styles.priorityText}>{priority}</Text>
+        </View>
         <Feather
           name={open ? "chevron-up" : "chevron-down"}
           size={24}
@@ -36,7 +38,7 @@ export default function TaskDropdown({ title, color, tasks = [] }) {
             <Text style={theme.fonts.body}>Geen taken in deze categorie.</Text>
           ) : (
             tasks.map((task) => (
-              <View key={task.id}>
+              <View key={task.task_id}>
                 <TodoItemComplete text={task.title} />
               </View>
             ))
