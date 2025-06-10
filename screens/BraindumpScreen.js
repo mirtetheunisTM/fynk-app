@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import PrimaryButton from "../components/PrimaryButton";
@@ -12,32 +13,53 @@ const CATEGORIES = [
 ];
 
 const API_URL = "https://fynk-backend.onrender.com/tasks";
-const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiZW1haWwiOiJhbGljZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0OTU2NTg1NSwiZXhwIjoxNzQ5NTY5NDU1fQ.1o_ME6dnaAm9rgGXH0XS_rfw25m5wgwMi-JYeen1q54";
 
 export default function BraindumpScreen() {
 	const [tasks, setTasks] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
+	const getToken = async () => {
+		const token = await AsyncStorage.getItem("authToken");
+		return token;
+	};
+
 	useEffect(() => {
-		fetch(API_URL, {
-			method: "GET",
-			headers: {
-				"Authorization": `Bearer ${TOKEN}`,
-				"Content-Type": "application/json"
-			}
-		})
-			.then(res => res.json())
-			.then(data => {
-				console.log("API response:", data);
-				setTasks(data.data || []);
-				setLoading(false);
-			})
-			.catch(err => {
-				setError("Kan taken niet ophalen.");
-				setLoading(false);
-			});
-	}, []);
+        const fetchTasks = async () => {
+            try {
+                const token = await AsyncStorage.getItem("authToken"); // Haal token op
+
+                if (!token) {
+                    setError("Geen token gevonden. Log in opnieuw.");
+                    setLoading(false);
+                    return;
+                }
+
+                const response = await fetch(API_URL, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log("API response:", data);
+                    setTasks(data.data || []);
+                } else {
+                    setError("Fout bij het ophalen van taken.");
+                }
+            } catch (error) {
+                setError("Kan taken niet ophalen.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTasks();
+    }, []);
 
 	const getTasksForCategory = (categoryId) =>
 	  tasks.filter(task => task.category_id === categoryId);
