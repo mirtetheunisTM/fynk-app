@@ -3,7 +3,7 @@ import theme from "../theme";
 
 export default function ShopTabs({ tabs, activeTab, onTabPress }) {
   return (
-    <View style={styles.tabs}>
+    <View style={[styles.tabs, tabs.length > 2 && { gap: 8}]}>
       {tabs.map((tab, idx) => (
         <TouchableOpacity
           key={tab}

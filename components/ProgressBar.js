@@ -5,9 +5,9 @@
 import { StyleSheet, View } from 'react-native';
 import theme from '../theme';
 
-const ProgressBar = ({ progress }) => {
+const ProgressBar = ({ progress, style }) => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <View style={[styles.progressBar, { width: `${progress * 100}%` }]} />
     </View>
   );
