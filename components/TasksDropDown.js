@@ -2,6 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import theme from "../theme";
+import TodoItemComplete from "./TodoItemComplete";
 
 export default function TaskDropdown({ title, priority, color }) {
   const [open, setOpen] = useState(false);
@@ -15,18 +16,18 @@ export default function TaskDropdown({ title, priority, color }) {
       >
         <Text style={[theme.fonts.h3, styles.taskTitle]}>{title}</Text>
         <View style={styles.priorityBadge}>
-          <Text style={styles.priorityText}>{priority}</Text>
+          <Text style={theme.fonts.caption}>{priority}</Text>
         </View>
         <Feather
           name={open ? "chevron-up" : "chevron-down"}
           size={24}
-          color="#1C2133"
+          color={theme.colors.darkBlue}
           style={{ marginLeft: 8 }}
         />
       </TouchableOpacity>
       {open && (
         <View style={styles.dropdownContent}>
-          <Text style={theme.fonts.body}>Meer details of acties hier...</Text>
+          <TodoItemComplete text={"Shop for twenty minutes."}/>
         </View>
       )}
     </View>
@@ -45,10 +46,9 @@ const styles = StyleSheet.create({
   },
   taskTitle: {
     flex: 1,
-    color: "#1C2133",
   },
   priorityBadge: {
-    backgroundColor: "#F5F6F8",
+    backgroundColor: theme.colors.creme,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 4,
@@ -61,9 +61,5 @@ const styles = StyleSheet.create({
   },
   dropdownContent: {
     marginTop: 16,
-    padding: 12,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    elevation: 2,
   },
 });
