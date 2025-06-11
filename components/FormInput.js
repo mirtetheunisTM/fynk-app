@@ -18,6 +18,7 @@ export default function FormInput({
   isPassword = false,
   keyboardType = 'default',
   autoCapitalize = 'none',
+  style,
 }) {
   const [isFocused, setIsFocused] = useState(false);
   const [animatedLabel] = useState(new Animated.Value(value ? 1 : 0));
@@ -50,7 +51,7 @@ export default function FormInput({
   };
 
   return (
-    <View style={[styles.wrapper, isFocused && styles.focused, value && !isFocused && styles.filled]}>
+    <View style={[styles.wrapper, isFocused && styles.focused, value && !isFocused && styles.filled, style]}>
       <Animated.Text style={labelStyle} pointerEvents="none">{placeholder}</Animated.Text>
       <TextInput
         style={styles.input}
