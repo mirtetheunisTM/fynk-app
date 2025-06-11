@@ -20,15 +20,14 @@ const TASK_TYPES = [
 
 const API_URL = "https://fynk-backend.onrender.com/categories";
 
-export default function TaskTypeDropdown() {
+export default function TaskTypeDropdown({ selectedCategory, setCategory }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
   const [taskTypes, setTaskTypes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const toggleDropdown = () => setIsExpanded((prev) => !prev);
-  const handleSelect = (id) => setSelectedId(id);
+  const handleSelect = (id) => setCategory(id);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -100,7 +99,7 @@ export default function TaskTypeDropdown() {
             >
               {/* Radio */}
               <View style={styles.radioCircle}>
-                {selectedId === item.category_id && <View style={styles.radioDot} />}
+                {selectedCategory === item.category_id && <View style={styles.radioDot} />}
               </View>
 
               {/* Emoji */}

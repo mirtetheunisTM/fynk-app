@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import PrimaryButton from "../components/PrimaryButton";
 import TaskDropdown from "../components/TasksDropDown";
@@ -23,42 +23,50 @@ export default function BraindumpScreen() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
+	const fetchTasks = async () => {
+		try {
+			const token = await AsyncStorage.getItem("authToken");
+
+			if (!token) {
+				setError("Geen token gevonden. Log in opnieuw.");
+				setLoading(false);
+				return;
+			}
+
+			const response = await fetch(API_URL, {
+				method: "GET",
+				headers: {
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json"
+				}
+			});
+
+			const data = await response.json();
+
+			if (response.ok) {
+				console.log("API response:", data);
+				setTasks(data.data || []);
+			} else {
+				setError("Fout bij het ophalen van taken.");
+			}
+		} catch (error) {
+			setError("Kan taken niet ophalen.");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	// **Haal taken op bij eerste render**
 	useEffect(() => {
-        const fetchTasks = async () => {
-            try {
-                const token = await AsyncStorage.getItem("authToken"); // Haal token op
+		fetchTasks();
+	}, []);
 
-                if (!token) {
-                    setError("Geen token gevonden. Log in opnieuw.");
-                    setLoading(false);
-                    return;
-                }
-
-                const response = await fetch(API_URL, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    console.log("API response:", data);
-                    setTasks(data.data || []);
-                } else {
-                    setError("Fout bij het ophalen van taken.");
-                }
-            } catch (error) {
-                setError("Kan taken niet ophalen.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchTasks();
-    }, []);
+	// **Herlaad taken wanneer gebruiker terugkeert naar het scherm**
+	useFocusEffect(
+		useCallback(() => {
+			fetchTasks();
+		}, [])
+	);
 
 	const getTasksForCategory = (categoryId) =>
 	  tasks.filter(task => task.urgency_type.toLowerCase() === categoryId.toLowerCase());

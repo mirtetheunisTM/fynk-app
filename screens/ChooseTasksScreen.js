@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import BackButton from '../components/BackButton';
 import PrimaryButton from '../components/PrimaryButton';
@@ -18,8 +18,7 @@ export default function ChooseTasksScreen() {
   const [error, setError] = useState(null);
   const [sessionTasks, setSessionTasks] = useState([])
 
-  useEffect(() => {
-    const fetchTasks = async () => {
+   const fetchTasks = async () => {
       try {
         const token = await AsyncStorage.getItem("authToken");
 
@@ -51,8 +50,17 @@ export default function ChooseTasksScreen() {
       }
     };
 
-    fetchTasks();
-  }, []);
+    // Haal taken op bij eerste render
+    useEffect(() => {
+        fetchTasks();
+    }, []);
+
+    // Herlaad taken wanneer gebruiker terugkeert naar het scherm
+    useFocusEffect(
+        useCallback(() => {
+            fetchTasks();
+        }, [])
+    );
 
   const toggleTask = (taskId) => {
     setSessionTasks((prevTasks) => 
@@ -104,7 +112,7 @@ export default function ChooseTasksScreen() {
 
       {/* Buttons Section */}
       <View style={styles.buttonRow}>
-        <SecondaryButton title="Add Task" onPress={() => {}} style={{ flex: 1 }} />
+        <SecondaryButton title="Add Task" onPress={() => navigation.navigate('AddTask')} style={{ flex: 1 }} />
         <PrimaryButton title="Start Session" onPress={() => navigation.navigate('ChooseSession', { sessionTasks })} style={{ flex: 1 }} />
       </View>
     </View>
