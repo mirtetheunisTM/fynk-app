@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRef, useState } from 'react';
 import { Dimensions, FlatList, Image, StyleSheet, Text, View, } from 'react-native';
@@ -5,6 +6,7 @@ import PrimaryButton from '../components/PrimaryButton';
 import theme from '../theme';
 
 const { width } = Dimensions.get('window');
+const API_URL = "https://fynk-backend.onrender.com/sessions";
 
 const focusModes = [
   {
@@ -33,19 +35,19 @@ const focusModes = [
   },
   {
     id: '4',
-    image: require('../assets/images/mascottes/beastmode.png'), 
-    title: 'Beast Mode',
-    tags: ['Taskbased', 'Eat the frog'],
-    description:
-      'Do the hardest, most annoying task first. Stop crying about it. Rip the Band-Aid off and move on with your life.',
-  },
-  {
-    id: '5',
     image: require('../assets/images/mascottes/workhardchillharder.png'), 
     title: 'Work Hard, Chill Harder',
     tags: ['Timer', 'Habit-forming'],
     description:
       'Work for 30 minutes, followed by a well-deserved 30-minute break. Done is better than perfect. At least you’re doing something.',
+  },
+  {
+    id: '5',
+    image: require('../assets/images/mascottes/beastmode.png'), 
+    title: 'Beast Mode',
+    tags: ['Taskbased', 'Eat the frog'],
+    description:
+      'Do the hardest, most annoying task first. Stop crying about it. Rip the Band-Aid off and move on with your life.',
   },
   {
     id: '6',
@@ -77,6 +79,42 @@ export default function ChooseSessionScreen() {
       setCurrentIndex(viewableItems[0].index);
     }
   }).current;
+
+    const startSession = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+
+      if (!token) {
+        console.error("Geen token gevonden. Log in opnieuw.");
+        return;
+      }
+
+      // Huidige tijd in ISO-formaat (UTC)
+      const startTime = new Date().toISOString();
+
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          start_time: startTime,
+          focus_mode_id: focusModes[currentIndex].id
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Sessie gestart:", data);
+      } else {
+        console.error("Fout bij het starten van sessie:", data.message);
+      }
+    } catch (error) {
+      console.error("Kan sessie niet starten:", error);
+    }
+  };
 
   return (
   <View style={styles.container}>
@@ -148,7 +186,7 @@ export default function ChooseSessionScreen() {
       ))}
     </View>
 
-    <PrimaryButton title="Start Session" onPress={() => {}} style={styles.button} />
+    <PrimaryButton title="Start Session" onPress={startSession} style={styles.button} />
   </View>
 );
 }
