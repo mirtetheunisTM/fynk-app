@@ -1,38 +1,65 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-//import { ChevronLeft } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import BackButton from '../components/BackButton';
 import PrimaryButton from '../components/PrimaryButton';
 import SecondaryButton from '../components/SecondaryButton';
 import TodoItem from '../components/TodoItem';
 import theme from '../theme';
 
+const TASKS_API_URL = "https://fynk-backend.onrender.com/tasks";
 
 export default function ChooseTasksScreen() {
   const navigation = useNavigation();
   const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Dummy data now, replace with API call
-    setTasks([
-      { id: '1', text: 'Drink water', category: 4 },
-      { id: '2', text: 'Complete Math assignment', category: 1 },
-      { id: '3', text: 'Read French chapter', category: 2 },
-    ]);
+    const fetchTasks = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+
+        if (!token) {
+          setError("Geen token gevonden. Log in opnieuw.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch(TASKS_API_URL, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setTasks(data.data || []);
+        } else {
+          setError("Fout bij het ophalen van taken.");
+        }
+      } catch (error) {
+        setError("Kan taken niet ophalen.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
   }, []);
 
   return (
     <View style={styles.container}>
-      {/* Background gradient */}
-      <LinearGradient
-          colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
+      <LinearGradient colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
           locations={[0, 0.6, 0.9, 1]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
-          style={styles.gradientBackground}
-        />
+          style={styles.gradientBackground} />
 
       {/* Header Section */}
       <View style={styles.headerSection}>
@@ -45,27 +72,38 @@ export default function ChooseTasksScreen() {
         </Text>
       </View>
 
-      {/* Todo Items Section */}
-      <View style={styles.todoSection}>
-        <FlatList
-          data={tasks}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <TodoItem text={item.text} category={item.category} />}
-          ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-          contentContainerStyle={{ paddingBottom: 120 }}
-        />
-      </View>
+      {/* Loading & Error Handling */}
+      {loading ? (
+        <ActivityIndicator size="large" color={theme.colors.lila} />
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : (
+        <View style={styles.todoSection}>
+          <FlatList
+            data={tasks}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <TodoItem text={item.title} category={item.urgency_type.toLowerCase()} />}
+            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+            contentContainerStyle={{ paddingBottom: 120 }}
+          />
+        </View>
+      )}
 
       {/* Buttons Section */}
       <View style={styles.buttonRow}>
-        <SecondaryButton title="Add Task" onPress={() => {}} style={{flex: 1}}/>
-        <PrimaryButton title="Start Session" onPress={() => {navigation.navigate('ChooseSession')}} style={{flex: 1}}/>
+        <SecondaryButton title="Add Task" onPress={() => {}} style={{ flex: 1 }} />
+        <PrimaryButton title="Start Session" onPress={() => navigation.navigate('ChooseSession')} style={{ flex: 1 }} />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginVertical: 12,
+  },
   gradientBackground: {
     ...StyleSheet.absoluteFillObject,
     opacity: 0.2,
@@ -89,10 +127,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
-  },
-  backButton: {
-      width: 24,
-      height: 24,
   },
   title: {
     flex: 1,

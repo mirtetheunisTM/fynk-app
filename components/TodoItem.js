@@ -6,10 +6,10 @@ export default function TodoItem({ text, category }) {
   const [completed, setCompleted] = useState(false);
 
   const backgroundColor = {
-    1: theme.colors.pink,
-    2: theme.colors.lightPurple,
-    3: theme.colors.lila,
-    4: theme.colors.creme,
+    "deadline drama": theme.colors.pink,
+    "future me problem": theme.colors.lightPurple,
+    "duick fix": theme.colors.lila,
+    "nice, not necessary": theme.colors.creme,
   }[category] || theme.colors.neutral;
 
   return (
