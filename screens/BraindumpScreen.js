@@ -58,7 +58,7 @@ export default function BraindumpScreen() {
     }, []);
 
 	const getTasksForCategory = (categoryId) =>
-	  tasks.filter(task => task.category_id === categoryId);
+	  tasks.filter(task => task.urgency_type.toLowerCase() === categoryId.toLowerCase());
 
 	return (
 		<View style={styles.container}>
@@ -84,7 +84,7 @@ export default function BraindumpScreen() {
 							title={category.title}
 							color={category.color}
 							priority={category.priority} // <-- priority altijd meegeven!
-							tasks={getTasksForCategory(category.id)}
+							tasks={getTasksForCategory(category.title)}
 						/>
 					)}
 					contentContainerStyle={{ gap: 16, marginBottom: 32 }}

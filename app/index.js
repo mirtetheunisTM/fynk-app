@@ -24,14 +24,14 @@ export default function App() {
   const Stack = createNativeStackNavigator();
 
   return (
-    <Stack.Navigator initialRouteName="IntroScreen">
-      <Stack.Screen name="Playground" component={PlaygroundScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="IntroScreen" component={IntroScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
-      <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false }} />
-    </Stack.Navigator>
+      <Stack.Navigator initialRouteName="IntroScreen">
+        <Stack.Screen name="Playground" component={PlaygroundScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="IntroScreen" component={IntroScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
+        <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false }} />
+      </Stack.Navigator>
   );
 }

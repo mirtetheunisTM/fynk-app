@@ -110,8 +110,8 @@ export default function HomeScreen() {
             case 1: return "Tick Tock";
             case 2: return "Monk Mode";
             case 3: return "To Do or Die";
-            case 4: return "Beast Mode";
-            case 5: return "Work Hard, Chill Harder";
+            case 4: return "Work Hard, Chill Harder";
+            case 5: return "Beast Mode";
             case 6: return "Figure It Out";
             default: return "No Focus Mode";
         }
@@ -123,8 +123,8 @@ export default function HomeScreen() {
             case 1: return require('../assets/images/mascottes/ticktock.png');
             case 2: return require('../assets/images/mascottes/monkmode.png');
             case 3: return require('../assets/images/mascottes/todoordie.png');
-            case 4: return require('../assets/images/mascottes/beastmode.png');
-            case 5: return require('../assets/images/mascottes/workhardchillharder.png');
+            case 4: return require('../assets/images/mascottes/workhardchillharder.png');
+            case 5: return require('../assets/images/mascottes/beastmode.png');
             case 6: return require('../assets/images/mascottes/figureitout.png');
             default: return require('../assets/images/mascottes/ticktock.png');
         }
@@ -166,7 +166,7 @@ export default function HomeScreen() {
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={theme.fonts.h3}>Your upcoming tasks</Text>
-          <TouchableOpacity onPress={() => {navigation.navigate('MainTabs/Braindump');}}>
+          <TouchableOpacity onPress={() => {navigation.navigate('Braindump');}}>
             <Text style={[theme.fonts.caption, { color: theme.colors.primaryPurple, fontWeight: 'bold' }]}>
               View All
             </Text>
