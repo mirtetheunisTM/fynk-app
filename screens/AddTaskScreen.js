@@ -4,6 +4,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import BackButton from '../components/BackButton';
 import DatePicker from '../components/DatePicker';
 import FormInput from '../components/FormInput';
+import ImportanceRating from '../components/ImportanceRating';
+import PrimaryButton from '../components/PrimaryButton';
 import TaskTypeDropdown from '../components/TaskTypeDropdown';
 import theme from '../theme';
 
@@ -11,6 +13,7 @@ export default function AddTaskScreen() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [deadline, setDeadline] = useState(new Date());
+    const [importance, setImportance] = useState(0);
 
     return (
         <View style={styles.container}>
@@ -34,7 +37,7 @@ export default function AddTaskScreen() {
               {/* Input values */}
               <View style={styles.input}>
                 <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>Describe your task</Text>
-                <FormInput placeholder="Title" value={title} onChangeText={setTitle} />
+                <FormInput placeholder="Title" value={title} onChangeText={setTitle} style={{marginBottom: -2}}/>
                 <TaskTypeDropdown />
                 <FormInput placeholder="Description" style={{height: 120}} value={description} onChangeText={setDescription}/>
               </View>
@@ -44,6 +47,14 @@ export default function AddTaskScreen() {
                 <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>Deadline</Text>
                 <DatePicker value={deadline} onChange={setDeadline} />
               </View>
+
+              {/* Rating */}
+              <View style={styles.input}>
+                <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>Rate task importance</Text>
+                <ImportanceRating value={importance} onChange={setImportance} />
+              </View>
+
+              <PrimaryButton title="Add to todo list" onPress={() => {}} style={{ marginTop: 24 }} />
         </View>
     );
 }
