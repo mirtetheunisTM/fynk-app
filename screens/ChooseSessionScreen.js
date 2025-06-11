@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRef, useState } from 'react';
 import { Dimensions, FlatList, Image, StyleSheet, Text, View, } from 'react-native';
@@ -72,6 +73,10 @@ export default function ChooseSessionScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef();
 
+  const route = useRoute();
+  const { sessionTasks } = route.params;
+  console.log(sessionTasks);
+
   const viewConfigRef = useRef({ itemVisiblePercentThreshold: 50 }).current;
 
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
@@ -92,6 +97,7 @@ export default function ChooseSessionScreen() {
       // Huidige tijd in ISO-formaat (UTC)
       const startTime = new Date().toISOString();
 
+      // Sessie aanmaken
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
@@ -111,6 +117,24 @@ export default function ChooseSessionScreen() {
       } else {
         console.error("Fout bij het starten van sessie:", data.message);
       }
+
+      const sessionId = data.data.session_id;
+
+      // Taken linken aan sessie
+      if (sessionTasks.length === 1) {
+        await fetch(`${API_URL}/${sessionId}/task/${sessionTasks[0]}`, {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${token}` },
+        });
+      } else if (sessionTasks.length > 1) {
+        await fetch(`${API_URL}/${sessionId}/tasks`, {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ taskIds: sessionTasks }),
+        });
+      }
+
+      console.log("Sessie gestart met taken:", sessionTasks);
     } catch (error) {
       console.error("Kan sessie niet starten:", error);
     }

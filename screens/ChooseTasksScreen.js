@@ -16,6 +16,7 @@ export default function ChooseTasksScreen() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sessionTasks, setSessionTasks] = useState([])
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -53,6 +54,18 @@ export default function ChooseTasksScreen() {
     fetchTasks();
   }, []);
 
+  const toggleTask = (taskId) => {
+    setSessionTasks((prevTasks) => 
+      prevTasks.includes(taskId)
+        ? prevTasks.filter((id) => id !== taskId)
+        : [...prevTasks, taskId]
+    );
+  };
+
+  useEffect(() => {
+  console.log("sessionTasks na update:", sessionTasks);
+}, [sessionTasks]);
+
   return (
     <View style={styles.container}>
       <LinearGradient colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
@@ -81,8 +94,8 @@ export default function ChooseTasksScreen() {
         <View style={styles.todoSection}>
           <FlatList
             data={tasks}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <TodoItem text={item.title} category={item.urgency_type.toLowerCase()} />}
+            keyExtractor={(item) => item.task_id}
+            renderItem={({ item }) => <TodoItem text={item.title} category={item.urgency_type.toLowerCase()} toggleTask={toggleTask} id={item.task_id}/>}
             ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
             contentContainerStyle={{ paddingBottom: 120 }}
           />
@@ -92,7 +105,7 @@ export default function ChooseTasksScreen() {
       {/* Buttons Section */}
       <View style={styles.buttonRow}>
         <SecondaryButton title="Add Task" onPress={() => {}} style={{ flex: 1 }} />
-        <PrimaryButton title="Start Session" onPress={() => navigation.navigate('ChooseSession')} style={{ flex: 1 }} />
+        <PrimaryButton title="Start Session" onPress={() => navigation.navigate('ChooseSession', { sessionTasks })} style={{ flex: 1 }} />
       </View>
     </View>
   );

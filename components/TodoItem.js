@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import theme from '../theme';
 
-export default function TodoItem({ text, category }) {
+export default function TodoItem({ text, category, toggleTask, id }) {
   const [completed, setCompleted] = useState(false);
 
   const backgroundColor = {
@@ -14,7 +14,10 @@ export default function TodoItem({ text, category }) {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <Pressable onPress={() => setCompleted(!completed)}>
+      <Pressable onPress={() => {
+        setCompleted(!completed);
+        toggleTask(id);
+      }}>
         <View style={[styles.circle, completed && styles.circleCompleted]}>
           {completed && <Text style={styles.checkmark}>✓</Text>}
         </View>
