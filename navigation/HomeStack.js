@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AddTaskScreen from '../screens/AddTaskScreen';
 import ChooseSessionScreen from '../screens/ChooseSessionScreen';
 import ChooseTasksScreen from '../screens/ChooseTasksScreen';
 import HomeScreen from '../screens/HomeScreen';
@@ -11,6 +12,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen name="HomeMain" component={HomeScreen} />
       <Stack.Screen name="ChooseTasks" component={ChooseTasksScreen} />
       <Stack.Screen name="ChooseSession" component={ChooseSessionScreen} />
+      <Stack.Screen name="AddTask" component={AddTaskScreen} />
     </Stack.Navigator>
   );
 }

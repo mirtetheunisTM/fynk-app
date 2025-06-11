@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
@@ -16,6 +17,8 @@ const CATEGORIES = [
 const API_URL = "https://fynk-backend.onrender.com/tasks";
 
 export default function BraindumpScreen() {
+	const navigation = useNavigation();
+
 	const [tasks, setTasks] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -93,7 +96,7 @@ export default function BraindumpScreen() {
 			)}
 			<PrimaryButton
 				title="Add task"
-				onPress={() => {}}
+				onPress={() => navigation.navigate("AddTask")}
 				style={styles.addButton}
 			/>
 		</View>

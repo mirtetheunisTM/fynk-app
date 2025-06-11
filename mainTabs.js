@@ -3,9 +3,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View } from 'react-native';
 import theme from './theme';
 
+import BraindumpStackNavigator from './navigation/BraindumpStack';
 import HomeStackNavigator from './navigation/HomeStack';
 import ShopStackNavigator from './navigation/ShopStack';
-import BraindumpScreen from './screens/BraindumpScreen';
 import FriendsScreen from './screens/FriendsScreen';
 import ProfileScreen from './screens/ProfileScreen';
 
@@ -49,7 +49,7 @@ export default function MainTabs() {
       })}
     >
       <Tab.Screen name="Home" component={HomeStackNavigator} />
-      <Tab.Screen name="Braindump" component={BraindumpScreen} />
+      <Tab.Screen name="Braindump" component={BraindumpStackNavigator} />
       <Tab.Screen name="Friends" component={FriendsScreen} />
       <Tab.Screen name="Shop" component={ShopStackNavigator} />
       <Tab.Screen name="Profile" component={ProfileScreen} />

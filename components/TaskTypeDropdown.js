@@ -1,10 +1,12 @@
 import { Feather } from '@expo/vector-icons';
-import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
 import {
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import theme from '../theme';
 
@@ -16,12 +18,68 @@ const TASK_TYPES = [
   { id: 'me', title: 'Me Time', emoji: '😌' },
 ];
 
+const API_URL = "https://fynk-backend.onrender.com/categories";
+
 export default function TaskTypeDropdown() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [taskTypes, setTaskTypes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const toggleDropdown = () => setIsExpanded((prev) => !prev);
   const handleSelect = (id) => setSelectedId(id);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+
+        if (!token) {
+          setError("Geen token gevonden. Log in opnieuw.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch(API_URL, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setTaskTypes(data.data || []);
+          console.log("Types: ", data.data);
+        } else {
+          setError("Fout bij het ophalen van categorieën.");
+          console.log("Error: ", error);
+        }
+      } catch (error) {
+        setError("Kan categorieën niet ophalen.");
+        console.log("Error: ", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const getImage = (category_id) => {
+        category_id = Number(category_id);
+        switch (category_id) {
+            case 1: return require('../assets/images/mascottes/study.png');
+            case 2: return require('../assets/images/mascottes/write.png');
+            case 3: return require('../assets/images/mascottes/admin.png');
+            case 4: return require('../assets/images/mascottes/life.png');
+            case 5: return require('../assets/images/mascottes/me.png');
+            default: return require('../assets/images/mascottes/wave.png');
+        }
+    };
 
   return (
     <View style={styles.wrapper}>
@@ -34,22 +92,22 @@ export default function TaskTypeDropdown() {
       {/* Dropdown list */}
       {isExpanded && (
         <View style={styles.dropdownList}>
-          {TASK_TYPES.map((item) => (
+          {taskTypes.map((item) => (
             <TouchableOpacity
-              key={item.id}
+              key={item.category_id}
               style={styles.taskItem}
-              onPress={() => handleSelect(item.id)}
+              onPress={() => handleSelect(item.category_id)}
             >
               {/* Radio */}
               <View style={styles.radioCircle}>
-                {selectedId === item.id && <View style={styles.radioDot} />}
+                {selectedId === item.category_id && <View style={styles.radioDot} />}
               </View>
 
               {/* Emoji */}
-              <Text style={styles.emoji}>{item.emoji}</Text>
+              <Image source={getImage(item.category_id)} style={styles.emoji} />
 
               {/* Title */}
-              <Text style={[theme.fonts.body, styles.title]}>{item.title}</Text>
+              <Text style={[theme.fonts.body, styles.title]}>{item.name}</Text>
 
               {/* Info icon */}
               <TouchableOpacity>
@@ -95,19 +153,20 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: theme.colors.lila,
     alignItems: 'center',
     justifyContent: 'center',
   },
   radioDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 12,
+    height: 12,
+    borderRadius: 10,
     backgroundColor: theme.colors.lightPurple,
   },
   emoji: {
-    fontSize: 20,
+    height: 24,
+    width: 24,
   },
   title: {
     flex: 1,
