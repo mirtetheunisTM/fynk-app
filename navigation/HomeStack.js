@@ -4,6 +4,7 @@ import ChooseSessionScreen from '../screens/ChooseSessionScreen';
 import ChooseTasksScreen from '../screens/ChooseTasksScreen';
 import FocusSessionScreen from '../screens/FocusSessionScreen';
 import HomeScreen from '../screens/HomeScreen';
+import SessionCompletedScreen from '../screens/SessionCompletedScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen name="ChooseSession" component={ChooseSessionScreen} />
       <Stack.Screen name="AddTask" component={AddTaskScreen} />
       <Stack.Screen name="FocusSession" component={FocusSessionScreen} />
+      <Stack.Screen name="SessionCompleted" component={SessionCompletedScreen} />
     </Stack.Navigator>
   );
 }

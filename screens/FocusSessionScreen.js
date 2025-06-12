@@ -5,14 +5,14 @@ import dayjs from 'dayjs';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef, useState } from 'react';
 import {
-    Animated,
-    FlatList,
-    Image,
-    Modal,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  FlatList,
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
 import SecondaryButton from '../components/SecondaryButton';
@@ -156,7 +156,7 @@ export default function FocusSessionScreen() {
 
             if (response.ok) {
             console.log("Sessie succesvol beëindigd:", data);
-            navigation.navigate("HomeMain");
+            navigation.navigate("SessionCompleted", { sessionId });
             } else {
             console.error("Fout bij beëindigen van sessie:", data.message);
             }

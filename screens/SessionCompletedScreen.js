@@ -1,11 +1,59 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
 import theme from '../theme';
 
 export default function SessionCompletedScreen() {
-    const tasksFinished = 3;
-    const tasksTotal = 5;
+    const route = useRoute();
+    const { sessionId } = route.params;
+
+    const [tasksFinished, setTasksFinished] = useState(0);
+    const [tasksTotal, setTasksTotal] = useState(0);
+
+    useEffect(() => {
+    const fetchTasks = async () => {
+            try {
+            const token = await AsyncStorage.getItem("authToken");
+
+            if (!token) {
+                console.error("Geen token gevonden. Log in opnieuw.");
+                return;
+            }
+
+            // **Haal ALLE taken op die gelinkt zijn aan de sessie**
+            const sessionTasksResponse = await fetch(`https://fynk-backend.onrender.com/sessions/${sessionId}/tasks`, {
+                headers: { "Authorization": `Bearer ${token}` },
+            });
+
+            const sessionTasksData = await sessionTasksResponse.json();
+            const allTasks = sessionTasksData.data || [];
+            console.log("All tasks: ", allTasks);
+
+            // **Haal de voltooide taken op**
+            const completedTasksResponse = await fetch(`https://fynk-backend.onrender.com/tasks/status/done`, {
+                headers: { "Authorization": `Bearer ${token}` },
+            });
+
+            const completedTasksData = await completedTasksResponse.json();
+            const completedTasks = completedTasksData.data || [];
+            console.log("Completed tasks: ", completedTasks);
+
+            // **Vergelijk alle taken met voltooide taken**
+            const finishedCount = allTasks.filter(task => completedTasks.some(completedTask => completedTask.task_id === task.task_id)).length;
+            console.log("Finished count: ", finishedCount);
+
+            setTasksTotal(allTasks.length);
+            setTasksFinished(finishedCount);
+            } catch (error) {
+            console.error("Fout bij het ophalen van taken:", error);
+            }
+        };
+
+        fetchTasks();
+    }, []);
 
     const finishedAllTasks = tasksFinished === tasksTotal;
 
