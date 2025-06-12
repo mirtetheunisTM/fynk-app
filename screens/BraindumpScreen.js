@@ -14,7 +14,7 @@ const CATEGORIES = [
 	{ id: "4", title: "Nice, not necessary", color: theme.colors.creme, priority: "Low" },
 ];
 
-const API_URL = "https://fynk-backend.onrender.com/tasks";
+const API_URL = "https://fynk-backend.onrender.com/tasks/status/todo";
 
 export default function BraindumpScreen() {
 	const navigation = useNavigation();

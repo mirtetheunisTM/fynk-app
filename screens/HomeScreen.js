@@ -1,14 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
 import SecondaryButton from '../components/SecondaryButton';
 import theme from '../theme';
 
-const TASKS_API_URL = "https://fynk-backend.onrender.com/tasks";
+const TASKS_API_URL = "https://fynk-backend.onrender.com/tasks/status/todo";
 const SESSION_API_URL = "https://fynk-backend.onrender.com/sessions/last";
 
 export default function HomeScreen() {
@@ -21,8 +21,6 @@ export default function HomeScreen() {
   const [lastSession, setLastSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
         const fetchData = async () => {
           setError('');
             try {
@@ -91,8 +89,17 @@ export default function HomeScreen() {
             }
         };
 
-        fetchData();
-    }, []);
+          // **Haal data op bij eerste render**
+          useEffect(() => {
+            fetchData();
+          }, []);
+        
+          // **Herlaad data wanneer gebruiker terugkeert naar het scherm**
+          useFocusEffect(
+            useCallback(() => {
+              fetchData();
+            }, [])
+          );
 
     const getTaskColor = (urgency_type) => {
         switch (urgency_type) {

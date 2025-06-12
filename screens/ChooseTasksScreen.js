@@ -9,7 +9,7 @@ import SecondaryButton from '../components/SecondaryButton';
 import TodoItem from '../components/TodoItem';
 import theme from '../theme';
 
-const TASKS_API_URL = "https://fynk-backend.onrender.com/tasks";
+const TASKS_API_URL = "https://fynk-backend.onrender.com/tasks/status/todo";
 
 export default function ChooseTasksScreen() {
   const navigation = useNavigation();
