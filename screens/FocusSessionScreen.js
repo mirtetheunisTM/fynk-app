@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -18,18 +18,23 @@ import TodoItemComplete from '../components/TodoItemComplete';
 import theme from '../theme';
 
 export default function FocusSessionScreen() {
+  const navigation = useNavigation();
   const route = useRoute();
   const { selectedFocusMode, sessionId } = route.params;
-  console.log(selectedFocusMode);
 
   const [tasks, setTasks] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState(
-    selectedFocusMode.focus_time?.minutes ? selectedFocusMode.focus_time?.minutes * 60 : null
+    selectedFocusMode.focus_time?.minutes ? selectedFocusMode.focus_time?.minutes * 60 : 0
   );
   const [progress, setProgress] = useState(new Animated.Value(0));
   const intervalRef = useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const isPausedRef = useRef(false);
 
+  // Fetch tasks
   const fetchTasks = async () => {
     try {
         const token = await AsyncStorage.getItem("authToken");
@@ -45,8 +50,14 @@ export default function FocusSessionScreen() {
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = await response.json();
-      setTasks(data);
+
+      if (response.ok) {
+        const data = await response.json();
+        setTasks(data.data || []);
+        console.log(data.data);
+      } else {
+        console.log("Fout bij het ophalen van taken.");
+      }
     } catch (err) {
       console.error('Error fetching tasks:', err);
     }
@@ -56,17 +67,22 @@ export default function FocusSessionScreen() {
     fetchTasks();
   }, []);
 
+  // Timer functions
   useEffect(() => {
-    if (timeLeft === null) return;
+    if (timeLeft === null) {
+        finishSession(true);
+    };
 
     intervalRef.current = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(intervalRef.current);
-          return 0;
+        if (!isPausedRef.current) {
+            setTimeLeft(prev => {
+            if (selectedFocusMode.focus_time?.minutes) {
+                return prev <= 1 ? 0 : prev - 1; // Normale aftelling
+            } else {
+                return prev + 1; // Optellen als er geen focus tijd is
+            }
+            });
         }
-        return prev - 1;
-      });
     }, 1000);
 
     return () => clearInterval(intervalRef.current);
@@ -98,6 +114,54 @@ export default function FocusSessionScreen() {
     ? `${selectedFocusMode.focus_time?.minutes} min focus`
     : 'No breaks, just finish it';
 
+    const getFocusModeImage = (focus_mode_id) => {
+        switch (Number(focus_mode_id)) {
+        case 1: return require('../assets/images/mascottes/ticktockfocus.png');
+        case 2: return require('../assets/images/mascottes/monkmodefocus.png');
+        case 3: return require('../assets/images/mascottes/todoordiefocus.png');
+        case 4: return require('../assets/images/mascottes/workhardchillharderfocus.png');
+        case 5: return require('../assets/images/mascottes/beastmodefocus.png');
+        case 6: return require('../assets/images/mascottes/figureitoutfocus.png');
+        default: return require('../assets/images/mascottes/ticktockfocus.png');
+        }
+    };
+
+    // End session
+    const finishSession = async (successful) => {
+        try {
+            const token = await AsyncStorage.getItem("authToken");
+
+            if (!token) {
+            console.error("Geen token gevonden. Log in opnieuw.");
+            return;
+            }
+
+            const response = await fetch(`https://fynk-backend.onrender.com/sessions/${sessionId}/finish`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                end_time: new Date().toISOString(),
+                successful,
+                rating: successful ? 5 : 1,
+            }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+            console.log("Sessie succesvol beëindigd:", data);
+            navigation.navigate("HomeMain");
+            } else {
+            console.error("Fout bij beëindigen van sessie:", data.message);
+            }
+        } catch (error) {
+            console.error("Kan sessie niet beëindigen:", error);
+        }
+    };
+
   return (
     <View style={styles.container}>
       {/* Top Bar */}
@@ -120,7 +184,7 @@ export default function FocusSessionScreen() {
       {dropdownOpen && (
         <FlatList
           data={tasks}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.task_id}
           renderItem={({ item }) => <TodoItemComplete text={item.title} />}
           style={styles.dropdownList}
         />
@@ -164,24 +228,21 @@ export default function FocusSessionScreen() {
 
       {/* Buttons */}
       <View style={styles.buttonRow}>
-        <PrimaryButton title="⏸" style={{paddingHorizontal: 24, paddingVertical: 12}}/>
-        <SecondaryButton title="⏹" style={{paddingHorizontal: 24, paddingVertical: 12}}/>
+        <PrimaryButton
+            title={isPaused ? "▶️" : "⏸"}
+            style={{ paddingHorizontal: 24, paddingVertical: 12 }}
+            onPress={() => {
+                setIsPaused(prev => {
+                    isPausedRef.current = !prev;
+                    return !prev;
+                });
+                }}
+        />
+        <SecondaryButton title="⏹" style={{paddingHorizontal: 24, paddingVertical: 12}} onPress={() => finishSession(false)}/>
       </View>
     </View>
   );
 }
-
-const getFocusModeImage = (focus_mode_id) => {
-    switch (Number(focus_mode_id)) {
-      case 1: return require('../assets/images/mascottes/ticktockfocus.png');
-      case 2: return require('../assets/images/mascottes/monkmodefocus.png');
-      case 3: return require('../assets/images/mascottes/todoordiefocus.png');
-      case 4: return require('../assets/images/mascottes/workhardchillharderfocus.png');
-      case 5: return require('../assets/images/mascottes/beastmodefocus.png');
-      case 6: return require('../assets/images/mascottes/figureitoutfocus.png');
-      default: return require('../assets/images/mascottes/ticktockfocus.png');
-    }
-  };
 
 const styles = StyleSheet.create({
   container: {
@@ -221,7 +282,7 @@ const styles = StyleSheet.create({
     borderRadius: 200,
     backgroundColor: theme.colors.lightPurple,
     overflow: 'hidden',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   innerFill: {
@@ -234,6 +295,7 @@ const styles = StyleSheet.create({
     width: 225,
     height: 225,
     resizeMode: 'contain',
+    alignSelf: 'center',
   },
   timer: {
     textAlign: 'center',

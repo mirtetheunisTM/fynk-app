@@ -201,7 +201,7 @@ export default function HomeScreen() {
                 <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>{getFocusMode(lastSession.focus_mode_id)}</Text>
                 <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{lastSession.date}</Text>
               </View>
-              <Text style={theme.fonts.caption}>{lastSession.duration ? lastSession.duration : 'No duration known'}</Text>
+              <Text style={theme.fonts.caption}>{lastSession.duration ? lastSession.duration + ' minutes' : 'No duration known'}</Text>
             </View>
           </View>
         </View>
