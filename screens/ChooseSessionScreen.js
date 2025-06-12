@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef, useState } from 'react';
 import { Dimensions, FlatList, Image, StyleSheet, Text, View, } from 'react-native';
@@ -9,57 +9,6 @@ import theme from '../theme';
 const { width } = Dimensions.get('window');
 const API_URL = "https://fynk-backend.onrender.com/sessions";
 const MODES_API_URL = "https://fynk-backend.onrender.com/focusModes";
-
-/*const focusModes = [
-  {
-    id: '1',
-    image: require('../assets/images/mascottes/ticktock.png'), 
-    title: 'Tick Tock',
-    tags: ['Timer', 'Pomodoro', 'Recommended'],
-    description:
-      'Work for 25 minutes, break for 5. Rinse and repeat until you finally finish something. Perfect for people who can’t focus longer than a goldfish.',
-  },
-  {
-    id: '2',
-    image: require('../assets/images/mascottes/monkmode.png'), 
-    title: 'Monk Mode',
-    tags: ['Timer', 'Deepwork'],
-    description:
-      '90 minutes of work, 20 minutes break. Longer block to get into zen mode/flow state. Medium active break to reset.',
-  },
-  {
-    id: '3',
-    image: require('../assets/images/mascottes/todoordie.png'), 
-    title: 'To Do or Die',
-    tags: ['Taskbased', 'Deepwork'],
-    description:
-      'Pick one task. Just one. Then work on it until it’s done. No timers, no breaks, no escape. It’s you vs. the to-do. Winner takes all.',
-  },
-  {
-    id: '4',
-    image: require('../assets/images/mascottes/workhardchillharder.png'), 
-    title: 'Work Hard, Chill Harder',
-    tags: ['Timer', 'Habit-forming'],
-    description:
-      'Work for 30 minutes, followed by a well-deserved 30-minute break. Done is better than perfect. At least you’re doing something.',
-  },
-  {
-    id: '5',
-    image: require('../assets/images/mascottes/beastmode.png'), 
-    title: 'Beast Mode',
-    tags: ['Taskbased', 'Eat the frog'],
-    description:
-      'Do the hardest, most annoying task first. Stop crying about it. Rip the Band-Aid off and move on with your life.',
-  },
-  {
-    id: '6',
-    image: require('../assets/images/mascottes/figureitout.png'), 
-    title: 'Figure It Out',
-    tags: ['Timer', 'Custom'],
-    description:
-      'Pick your own focus time and breaks. Want a 5-minute work session with a 3-hour break? Go ahead. See where that gets you.',
-  },
-];*/
 
 const getTagStyle = (tag, idx) => {
   if (tag.toLowerCase() === 'recommended') {
@@ -71,6 +20,8 @@ const getTagStyle = (tag, idx) => {
 };
 
 export default function ChooseSessionScreen() {
+  const navigation = useNavigation();
+  
   const [focusModes, setFocusModes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -179,14 +130,18 @@ export default function ChooseSessionScreen() {
         },
         body: JSON.stringify({
           start_time: startTime,
-          focus_mode_id: focusModes[currentIndex].id
+          focus_mode_id: focusModes[currentIndex].focus_mode_id
         })
       });
 
       const data = await response.json();
 
       if (response.ok) {
+        const sessionId = data.data.session_id;
         console.log("Sessie gestart:", data);
+
+        // Ga naar de volgende pagina en geef het sessionId en focusMode mee
+        navigation.navigate("FocusSession", { sessionId, selectedFocusMode: focusModes[currentIndex] });
       } else {
         console.error("Fout bij het starten van sessie:", data.message);
       }
@@ -242,7 +197,7 @@ export default function ChooseSessionScreen() {
       renderItem={({ item }) => (
         <View style={styles.card}>
           <Image source={item.image} style={styles.image} />
-          <Text style={[theme.fonts.h2, styles.focusTitle]}>{item.title}</Text>
+          <Text style={[theme.fonts.h2, styles.focusTitle]}>{item.name}</Text>
           <View style={styles.tags}>
             {item.tags.map((tag, idx) => (
               <Text

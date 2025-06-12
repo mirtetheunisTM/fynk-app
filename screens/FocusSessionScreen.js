@@ -1,0 +1,249 @@
+import { Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRoute } from '@react-navigation/native';
+import dayjs from 'dayjs';
+import { useEffect, useRef, useState } from 'react';
+import {
+    Animated,
+    FlatList,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import PrimaryButton from '../components/PrimaryButton';
+import SecondaryButton from '../components/SecondaryButton';
+import TodoItemComplete from '../components/TodoItemComplete';
+import theme from '../theme';
+
+export default function FocusSessionScreen() {
+  const route = useRoute();
+  const { selectedFocusMode, sessionId } = route.params;
+  console.log(selectedFocusMode);
+
+  const [tasks, setTasks] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(
+    selectedFocusMode.focus_time?.minutes ? selectedFocusMode.focus_time?.minutes * 60 : null
+  );
+  const [progress, setProgress] = useState(new Animated.Value(0));
+  const intervalRef = useRef(null);
+
+  const fetchTasks = async () => {
+    try {
+        const token = await AsyncStorage.getItem("authToken");
+
+        if (!token) {
+          setError("Geen token gevonden. Log in opnieuw.");
+          setLoading(false);
+          return;
+        }
+
+      const response = await fetch(`https://fynk-backend.onrender.com/sessions/${sessionId}/tasks`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      setTasks(data);
+    } catch (err) {
+      console.error('Error fetching tasks:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  useEffect(() => {
+    if (timeLeft === null) return;
+
+    intervalRef.current = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(intervalRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalRef.current);
+  }, []);
+
+  useEffect(() => {
+    if (timeLeft !== null && selectedFocusMode.focus_time?.minutes) {
+      const total = selectedFocusMode.focus_time?.minutes * 60;
+      Animated.timing(progress, {
+        toValue: 1 - timeLeft / total,
+        duration: 500,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [timeLeft]);
+
+  const formattedTime = timeLeft !== null
+    ? `${Math.floor(timeLeft / 60)
+        .toString()
+        .padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')}`
+    : null;
+
+  const breakTime = selectedFocusMode.break_time?.minutes;
+  const breakText = breakTime
+    ? `Next ${breakTime} min break → ${dayjs().add(breakTime, 'minutes').format('HH:mm')}`
+    : 'Finish your task → done';
+
+  const focusText = selectedFocusMode.focus_time?.minutes
+    ? `${selectedFocusMode.focus_time?.minutes} min focus`
+    : 'No breaks, just finish it';
+
+  return (
+    <View style={styles.container}>
+      {/* Top Bar */}
+      <View style={styles.topRow}>
+        <Text style={[theme.fonts.h2, { flex: 1 }]}>{selectedFocusMode.name}</Text>
+        <TouchableOpacity
+          style={styles.dropdownToggle}
+          onPress={() => setDropdownOpen(!dropdownOpen)}
+        >
+          <Text style={[theme.fonts.caption, {fontWeight: 'bold'}]}>Tasks</Text>
+          <Feather
+            name={dropdownOpen ? 'chevron-up' : 'chevron-down'}
+            size={16}
+            color={theme.colors.darkBlue}
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* Dropdown */}
+      {dropdownOpen && (
+        <FlatList
+          data={tasks}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <TodoItemComplete text={item.title} />}
+          style={styles.dropdownList}
+        />
+      )}
+
+      {/* Focus Info */}
+      <View>
+        <Text style={[theme.fonts.h1, { textAlign: 'center', marginBottom: 8 }]}>{focusText}</Text>
+        <Text style={[theme.fonts.body, { textAlign: 'center', marginBottom: 16 }]}>
+            {breakText}
+        </Text>
+      </View>
+
+      {/* Circular Timer */}
+      <View>
+      <View style={styles.circleWrapper}>
+        <View style={styles.outerCircle}>
+          <Animated.View
+            style={[
+              styles.innerFill,
+              {
+                height: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['0%', '100%'],
+                }),
+              },
+            ]}
+          />
+          <Image
+            source={getFocusModeImage(selectedFocusMode.focus_mode_id)}
+            style={styles.centerImage}
+          />
+        </View>
+      </View>
+
+      {/* Timer */}
+      <Text style={[theme.fonts.h1, styles.timer]}>
+        {formattedTime ?? <Feather name="infinity" size={28} color={theme.colors.primaryPurple} />}
+      </Text>
+      </View>
+
+      {/* Buttons */}
+      <View style={styles.buttonRow}>
+        <PrimaryButton title="⏸" style={{paddingHorizontal: 24, paddingVertical: 12}}/>
+        <SecondaryButton title="⏹" style={{paddingHorizontal: 24, paddingVertical: 12}}/>
+      </View>
+    </View>
+  );
+}
+
+const getFocusModeImage = (focus_mode_id) => {
+    switch (Number(focus_mode_id)) {
+      case 1: return require('../assets/images/mascottes/ticktockfocus.png');
+      case 2: return require('../assets/images/mascottes/monkmodefocus.png');
+      case 3: return require('../assets/images/mascottes/todoordiefocus.png');
+      case 4: return require('../assets/images/mascottes/workhardchillharderfocus.png');
+      case 5: return require('../assets/images/mascottes/beastmodefocus.png');
+      case 6: return require('../assets/images/mascottes/figureitoutfocus.png');
+      default: return require('../assets/images/mascottes/ticktockfocus.png');
+    }
+  };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.creme,
+    padding: 24,
+    justifyContent: 'space-between',
+  },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  dropdownToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: theme.colors.lightPurple,
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  dropdownList: {
+    backgroundColor: theme.colors.lightPurple,
+    padding: 8,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  circleWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 24,
+  },
+  outerCircle: {
+    width: 270,
+    height: 270,
+    borderRadius: 200,
+    backgroundColor: theme.colors.lightPurple,
+    overflow: 'hidden',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  innerFill: {
+    position: 'absolute',
+    width: '100%',
+    backgroundColor: theme.colors.primaryPurple,
+    bottom: 0,
+  },
+  centerImage: {
+    width: 225,
+    height: 225,
+    resizeMode: 'contain',
+  },
+  timer: {
+    textAlign: 'center',
+    fontSize: 40,
+    color: theme.colors.primaryPurple,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 32,
+    gap: 12,
+  },
+});
