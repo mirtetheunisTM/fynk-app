@@ -7,6 +7,7 @@ import {
     Animated,
     FlatList,
     Image,
+    Modal,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -33,6 +34,7 @@ export default function FocusSessionScreen() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const isPausedRef = useRef(false);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   // Fetch tasks
   const fetchTasks = async () => {
@@ -169,7 +171,7 @@ export default function FocusSessionScreen() {
         <Text style={[theme.fonts.h2, { flex: 1 }]}>{selectedFocusMode.name}</Text>
         <TouchableOpacity
           style={styles.dropdownToggle}
-          onPress={() => setDropdownOpen(!dropdownOpen)}
+          onPress={() => setModalVisible(true)}
         >
           <Text style={[theme.fonts.caption, {fontWeight: 'bold'}]}>Tasks</Text>
           <Feather
@@ -180,15 +182,24 @@ export default function FocusSessionScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Dropdown */}
-      {dropdownOpen && (
-        <FlatList
-          data={tasks}
-          keyExtractor={(item) => item.task_id}
-          renderItem={({ item }) => <TodoItemComplete text={item.title} />}
-          style={styles.dropdownList}
-        />
-      )}
+      {/* Task popup */}
+      <Modal
+        visible={isModalVisible}
+        transparent={true}
+        >
+        <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+            <FlatList
+                data={tasks}
+                keyExtractor={(item) => item.task_id}
+                renderItem={({ item }) => <TodoItemComplete text={item.title} />}
+            />
+
+            <PrimaryButton title="Close" onPress={() => setModalVisible(false)} />
+            </View>
+        </View>
+       </Modal>
+
 
       {/* Focus Info */}
       <View>
@@ -307,5 +318,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 32,
     gap: 12,
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingTop: 60,
+    backgroundColor: 'rgba(196, 207, 255, 0.1)',
+  },
+  modalContainer: {
+    width: '90%',
+    backgroundColor: theme.colors.lightPurple,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 16,
+    alignItems: 'left',
   },
 });
