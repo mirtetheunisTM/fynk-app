@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
+import RatingPopup from '../components/RatingPopup';
 import theme from '../theme';
 
 export default function SessionCompletedScreen() {
@@ -12,6 +13,7 @@ export default function SessionCompletedScreen() {
 
     const [tasksFinished, setTasksFinished] = useState(0);
     const [tasksTotal, setTasksTotal] = useState(0);
+    const [ratingPopupVisible, setRatingPopupVisible] = useState(false);
 
     useEffect(() => {
     const fetchTasks = async () => {
@@ -83,7 +85,9 @@ export default function SessionCompletedScreen() {
                 </View>
             </View>
 
-            <PrimaryButton title="Continue" onPress={() => { }} />
+            <PrimaryButton title="Continue" onPress={() => setRatingPopupVisible(true)} />
+
+            <RatingPopup sessionId={sessionId} visible={ratingPopupVisible} onClose={() => setRatingPopupVisible(false)} />
         </View>
     );
 }
