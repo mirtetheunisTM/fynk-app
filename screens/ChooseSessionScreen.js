@@ -1,15 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Dimensions, FlatList, Image, StyleSheet, Text, View, } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
 import theme from '../theme';
 
 const { width } = Dimensions.get('window');
 const API_URL = "https://fynk-backend.onrender.com/sessions";
+const MODES_API_URL = "https://fynk-backend.onrender.com/focusModes";
 
-const focusModes = [
+/*const focusModes = [
   {
     id: '1',
     image: require('../assets/images/mascottes/ticktock.png'), 
@@ -58,7 +59,7 @@ const focusModes = [
     description:
       'Pick your own focus time and breaks. Want a 5-minute work session with a 3-hour break? Go ahead. See where that gets you.',
   },
-];
+];*/
 
 const getTagStyle = (tag, idx) => {
   if (tag.toLowerCase() === 'recommended') {
@@ -70,6 +71,9 @@ const getTagStyle = (tag, idx) => {
 };
 
 export default function ChooseSessionScreen() {
+  const [focusModes, setFocusModes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef();
 
@@ -84,6 +88,75 @@ export default function ChooseSessionScreen() {
       setCurrentIndex(viewableItems[0].index);
     }
   }).current;
+
+  // Haal focus modes op + koppel images en tags
+    useEffect(() => {
+    const fetchFocusModes = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+
+        if (!token) {
+          setError("Geen token gevonden. Log in opnieuw.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch(MODES_API_URL, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          const sortedModes = data.data
+            .map(mode => ({
+              ...mode,
+              image: getFocusModeImage(mode.focus_mode_id),
+              tags: getFocusModeTags(mode.focus_mode_id)
+            }))
+            .sort((a, b) => a.focus_mode_id - b.focus_mode_id); // Sorteer op id
+
+          setFocusModes(sortedModes);
+        } else {
+          setError("Fout bij het ophalen van focus modes.");
+        }
+      } catch (error) {
+        setError("Kan focus modes niet ophalen.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFocusModes();
+  }, []);
+
+  const getFocusModeImage = (focus_mode_id) => {
+    switch (Number(focus_mode_id)) {
+      case 1: return require('../assets/images/mascottes/ticktock.png');
+      case 2: return require('../assets/images/mascottes/monkmode.png');
+      case 3: return require('../assets/images/mascottes/todoordie.png');
+      case 4: return require('../assets/images/mascottes/workhardchillharder.png');
+      case 5: return require('../assets/images/mascottes/beastmode.png');
+      case 6: return require('../assets/images/mascottes/figureitout.png');
+      default: return require('../assets/images/mascottes/ticktock.png');
+    }
+  };
+
+  const getFocusModeTags = (focus_mode_id) => {
+    switch (Number(focus_mode_id)) {
+      case 1: return ['Timer', 'Pomodoro'];
+      case 2: return ['Timer', 'Deepwork'];
+      case 3: return ['Taskbased', 'Deepwork'];
+      case 4: return ['Timer', 'Habit-forming'];
+      case 5: return ['Taskbased', 'Eat the frog'];
+      case 6: return ['Timer', 'Custom'];
+      default: return ['Timer', 'Pomodoro'];
+    }
+  };
 
     const startSession = async () => {
     try {
@@ -163,7 +236,7 @@ export default function ChooseSessionScreen() {
       snapToInterval={width}
       ref={flatListRef}
       showsHorizontalScrollIndicator={false}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => item.focus_mode_id}
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={viewConfigRef}
       renderItem={({ item }) => (
