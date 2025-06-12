@@ -39,7 +39,7 @@ export default function TaskDropdown({ title, color, tasks = [], priority }) {
           ) : (
             tasks.map((task) => (
               <View key={task.task_id}>
-                <TodoItemComplete text={task.title} />
+                <TodoItemComplete text={task.title} taskId={task.task_id} />
               </View>
             ))
           )}

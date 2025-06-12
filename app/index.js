@@ -9,6 +9,7 @@ import LoginScreen from '../screens/LoginScreen';
 import PlaygroundScreen from '../screens/Playground';
 import ProductDetailScreen from '../screens/ProductDetailScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import SessionCompletedScreen from '../screens/SessionCompletedScreen';
 
 // Prevent auto hiding of splash until fonts are loaded
 SplashScreen.preventAutoHideAsync();
@@ -25,7 +26,7 @@ export default function App() {
   const Stack = createNativeStackNavigator();
 
   return (
-      <Stack.Navigator initialRouteName="LoginScreen">
+      <Stack.Navigator initialRouteName="SessionCompleted">
         <Stack.Screen name="Playground" component={PlaygroundScreen} options={{ headerShown: false }} />
         <Stack.Screen name="IntroScreen" component={IntroScreen} options={{ headerShown: false }} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
@@ -34,6 +35,7 @@ export default function App() {
         <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
         <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false }} />
         <Stack.Screen name="AddTask" component={AddTaskScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="SessionCompleted" component={SessionCompletedScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
   );
 }

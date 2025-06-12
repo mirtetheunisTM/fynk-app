@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef, useState } from 'react';
 import {
     Animated,
@@ -166,6 +167,13 @@ export default function FocusSessionScreen() {
 
   return (
     <View style={styles.container}>
+        {/* Background gradient */}
+        <LinearGradient colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
+        locations={[0, 0.6, 0.9, 1]}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={styles.gradientBackground} />
+
       {/* Top Bar */}
       <View style={styles.topRow}>
         <Text style={[theme.fonts.h2, { flex: 1 }]}>{selectedFocusMode.name}</Text>
@@ -192,7 +200,7 @@ export default function FocusSessionScreen() {
             <FlatList
                 data={tasks}
                 keyExtractor={(item) => item.task_id}
-                renderItem={({ item }) => <TodoItemComplete text={item.title} />}
+                renderItem={({ item }) => <TodoItemComplete text={item.title} taskId={item.task_id}/>}
             />
 
             <PrimaryButton title="Close" onPress={() => setModalVisible(false)} />
@@ -239,26 +247,39 @@ export default function FocusSessionScreen() {
 
       {/* Buttons */}
       <View style={styles.buttonRow}>
-        <PrimaryButton
-            title={isPaused ? "▶️" : "⏸"}
-            style={{ paddingHorizontal: 24, paddingVertical: 12 }}
-            onPress={() => {
-                setIsPaused(prev => {
-                    isPausedRef.current = !prev;
-                    return !prev;
-                });
-                }}
-        />
-        <SecondaryButton title="⏹" style={{paddingHorizontal: 24, paddingVertical: 12}} onPress={() => finishSession(false)}/>
+        <View style={styles.btn}>
+            <PrimaryButton
+                title={isPaused ? "▶️" : "⏸"}
+                style={{ paddingHorizontal: 24, paddingVertical: 12 }}
+                onPress={() => {
+                    setIsPaused(prev => {
+                        isPausedRef.current = !prev;
+                        return !prev;
+                    });
+                    }}
+            />
+            <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{isPaused ? "Resume" : "Pause"}</Text>
+        </View>
+
+        <View style={styles.btn}>
+            <SecondaryButton title="⏹" style={{paddingHorizontal: 24, paddingVertical: 12}} onPress={() => finishSession(false)}/>
+            <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>End session</Text>
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  gradientBackground: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.2,
+    zIndex: 0,
+  },
   container: {
     flex: 1,
-    backgroundColor: theme.colors.creme,
+    backgroundColor: theme.colors.neutral,
+    position: 'relative',
     padding: 24,
     justifyContent: 'space-between',
   },
@@ -318,6 +339,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 32,
     gap: 12,
+  },
+  btn: {
+    alignItems: 'center',
+    gap: 8,
   },
   modalBackground: {
     flex: 1,

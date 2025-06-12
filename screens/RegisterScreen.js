@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
@@ -6,6 +7,8 @@ import FormInput from '../components/FormInput';
 import PrimaryButton from '../components/PrimaryButton';
 import theme from '../theme';
 
+const API_URL = "https://fynk-backend.onrender.com/auth/signup";
+
 export default function RegisterScreen() {
     const navigation = useNavigation();
 
@@ -13,6 +16,37 @@ export default function RegisterScreen() {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
+  const handleRegister = async () => {
+    setErrorMessage('');
+
+    if (!name || !email || !password || password !== confirmPassword) {
+      setErrorMessage("Please fill in all the fields correctly.");
+      return;
+    }
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.token) {
+        await AsyncStorage.setItem("authToken", data.token);
+        navigation.replace("MainTabs"); // Naar hoofdscherm
+      } else {
+        setErrorMessage(data.message || "Registratie mislukt.");
+      }
+    } catch (error) {
+      setErrorMessage("Er is iets misgegaan: " + error.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -35,6 +69,9 @@ export default function RegisterScreen() {
         </View>
       </View>
 
+      {/* Error Message */}
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
       {/* Section 2: Input Fields */}
       <View style={styles.section2}>
         <FormInput placeholder="Email" value={email} onChangeText={setEmail}/>
@@ -45,7 +82,7 @@ export default function RegisterScreen() {
 
       {/* Section 3: Register Button */}
       <View style={styles.section3}>
-        <PrimaryButton title="Register" onPress={() => navigation.replace('MainTabs')}/>
+        <PrimaryButton title="Register" onPress={handleRegister}/>
       </View>
 
       {/* Section 4: Or Register With */}
@@ -155,5 +192,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     marginTop: 'auto',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginVertical: 12,
   },
 });

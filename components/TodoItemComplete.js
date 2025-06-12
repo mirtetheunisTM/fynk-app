@@ -2,11 +2,12 @@
 Input:
   text: string = text of the todo item*/
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import theme from '../theme';
 
-export default function TodoItemComplete({ text }) {
+export default function TodoItemComplete({ text, taskId }) {
     // Adds a checkmark when clicked and a animated line trough the text
 
     const [completed, setCompleted] = useState(false);
@@ -30,9 +31,49 @@ export default function TodoItemComplete({ text }) {
         outputRange: [24, 0], 
     });
 
+    const toggleTaskStatus = async (taskId, completed) => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+
+        if (!token) {
+          console.error("Geen token gevonden. Log in opnieuw.");
+          return;
+        }
+
+        const url = completed 
+          ? `https://fynk-backend.onrender.com/tasks/${taskId}/complete`
+          : `https://fynk-backend.onrender.com/tasks/${taskId}`;
+        
+        const body = completed ? {} : { status: "todo" };
+
+        const response = await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (response.ok) {
+          console.log(`Task ${taskId} ${completed ? "completed" : "reset to todo"}`);
+        } else {
+          console.error(`Fout bij updaten taak ${taskId}:`, await response.text());
+        }
+      } catch (error) {
+        console.error("Kan taakstatus niet wijzigen:", error);
+      }
+  };
+
+  const handleToggle = () => {
+    const newStatus = !completed;
+    setCompleted(newStatus); 
+    toggleTaskStatus(taskId, newStatus);
+  };
+
     return (
         <View style={styles.container}>
-        <Pressable onPress={() => setCompleted(!completed)}>
+        <Pressable onPress={handleToggle}>
             <View style={[styles.circle, completed && styles.circleCompleted]}>
             {completed && <Text style={styles.checkmark}>✓</Text>}
             </View>

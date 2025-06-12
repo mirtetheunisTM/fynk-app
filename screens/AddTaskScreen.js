@@ -116,7 +116,7 @@ export default function AddTaskScreen() {
 }
 
 const styles = StyleSheet.create({
-    gradientBackground: {
+      gradientBackground: {
         ...StyleSheet.absoluteFillObject,
         opacity: 0.2,
         zIndex: 0,
