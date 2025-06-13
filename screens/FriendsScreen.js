@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import NotificationIcon from '../assets/icons/NotificationIcon';
@@ -20,6 +21,8 @@ const sortedFriends = [...friends].sort((a, b) => {
 });
 
 export default function FriendsScreen() {
+    const navigation = useNavigation();
+
        return (
         <View style={styles.container}>
             {/* Background gradient */}
@@ -45,7 +48,7 @@ export default function FriendsScreen() {
             <View style={styles.focusSection}>
                 <View style={styles.headerRow}>
                     <Text style={[theme.fonts.h3, { marginRight: 'auto'}]}>Now focussing</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => {navigation.navigate('AllFriendsScreen')}}>
                         <Text style={[theme.fonts.caption, { fontWeight: 'bold'}]}>More</Text>
                     </TouchableOpacity>
                 </View>
