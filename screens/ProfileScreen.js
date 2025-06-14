@@ -11,6 +11,7 @@ import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
 import SessionCard from '../components/SessionCard';
 import ShopTabs from '../components/ShopTabs';
+import StatisticsTab from '../components/StatisticsTab';
 import theme from '../theme';
 
 export default function AccountScreen() {
@@ -165,6 +166,8 @@ export default function AccountScreen() {
               )}
             />}
           </>
+        ) : tab === 2 ? (
+          <StatisticsTab />
         ) : (
           <Text style={[theme.fonts.caption, { textAlign: 'center' }]}>No content available</Text>
         )}
