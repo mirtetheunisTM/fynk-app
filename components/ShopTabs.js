@@ -10,7 +10,7 @@ export default function ShopTabs({ tabs, activeTab, onTabPress }) {
           style={[styles.tab, activeTab === idx && styles.activeTab]}
           onPress={() => onTabPress(idx)}
         >
-          <Text style={[theme.fonts.h3, activeTab === idx && styles.activeText]}>
+          <Text style={[theme.fonts.h3, {color: 'rgba(28, 33, 51, 0.5)'}, activeTab === idx && styles.activeText]}>
             {tab}
           </Text>
         </TouchableOpacity>

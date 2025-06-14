@@ -1,8 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from '@react-navigation/native';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import EmptyState from '../components/EmptyState';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
@@ -14,25 +17,60 @@ export default function AccountScreen() {
   const navigation = useNavigation();
 
   const [tab, setTab] = useState(0);
+  const [sessionData, setSessionData] = useState([]);
 
-  const sessionData = [
-    /*{
-      image: require('../assets/images/mascottes/beastmode.png'),
-      name: 'You',
-      sessionDescription: 'Completed a Beast Mode Session',
-      timeAgo: 'Just now',
-      cheeredBy: 'Ella',
-      othersCount: 15,
-    },
-    {
-      image: require('../assets/images/mascottes/ticktock.png'),
-      name: 'You',
-      sessionDescription: 'Completed a Tick Tock Session',
-      timeAgo: '02-05',
-      cheeredBy: 'John',
-      othersCount: 5,
-    },*/
-  ];
+  const API_URL = "https://fynk-backend.onrender.com/sessions";
+
+  // Fetch sessions
+  const fetchSessions = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+
+      if (!token) {
+        console.error("Geen token gevonden. Log in opnieuw.");
+        return;
+      }
+
+      const response = await fetch(API_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSessionData(data.data || []);
+      } else {
+        console.error("Fout bij ophalen van sessies:", data.message);
+      }
+    } catch (error) {
+      console.error("Kan sessies niet ophalen:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSessions();
+  }, []);
+
+  // Get image and description
+  const getSessionDetails = (focus_mode_id) => {
+    switch (Number(focus_mode_id)) {
+      case 1: return { image: require('../assets/images/mascottes/ticktock.png'), description: "Completed a Tick Tock Session" };
+      case 2: return { image: require('../assets/images/mascottes/monkmode.png'), description: "Completed a Monk Mode Session" };
+      case 3: return { image: require('../assets/images/mascottes/todoordie.png'), description: "Completed a Todo or Die Session" };
+      case 4: return { image: require('../assets/images/mascottes/workhardchillharder.png'), description: "Completed a Work Hard Chill Harder Session" };
+      case 5: return { image: require('../assets/images/mascottes/beastmode.png'), description: "Completed a Beast Mode Session" };
+      default: return { image: require('../assets/images/mascottes/ticktock.png'), description: "Completed a Focus Session" };
+    }
+  };
+
+  // Get timeAgo
+  dayjs.extend(relativeTime);
+  const getTimeAgo = (session) => {
+    const sessionEndTime = session.end_time || session.start_time; // Gebruik start_time als end_time ontbreekt
+    return dayjs(sessionEndTime).fromNow(); 
+  }
 
   return (
     <View style={styles.container}>
@@ -105,19 +143,27 @@ export default function AccountScreen() {
               <PrimaryButton title="Start a Session" onPress={() => navigation.navigate('Home')} />
             </View>
           )}
-            {sessionData.length > 0 && sessionData.map((session, index) => (
-              <View key={index} style={styles.sessionBlock}>
-                <SessionCard
-                  profileImage={session.image}
-                  friendName={session.name}
-                  sessionDescription={session.sessionDescription}
-                  timeAgo={session.timeAgo}
-                />
-                <Text style={[theme.fonts.caption, { marginLeft: 48 }]}>
-                  Cheered by <Text style={styles.boldText}>{session.cheeredBy}</Text> and {session.othersCount} others
-                </Text>
-              </View>
-            ))}
+
+          {/* Session Cards */}
+            {sessionData.length > 0 && 
+              <FlatList
+                data={sessionData}
+                keyExtractor={(item, index) => index.toString()}
+                contentContainerStyle={{ paddingBottom: 16 }}
+                renderItem={({ item }) => (
+                  <View style={styles.sessionBlock}>
+                    <SessionCard
+                      profileImage={getSessionDetails(item.focus_mode_id).image}
+                      friendName="You"
+                      sessionDescription={getSessionDetails(item.focus_mode_id).description}
+                      timeAgo={getTimeAgo(item)}
+                    />
+                    <Text style={[theme.fonts.caption, { marginLeft: 48 }]}>
+                      Cheered by <Text style={styles.boldText}>Ella</Text> and <Text style={styles.boldText}>15 others</Text>
+                    </Text>
+                  </View>
+              )}
+            />}
           </>
         ) : (
           <Text style={[theme.fonts.caption, { textAlign: 'center' }]}>No content available</Text>
