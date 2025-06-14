@@ -52,7 +52,7 @@ export default function AllFriendsScreen() {
 
               {/* Offline section */}
               <View style={styles.section}>
-                  <Text style={theme.fonts.h3}>Offline</Text>
+                  <Text style={[theme.fonts.h3, { marginBottom: 16 }]}>Offline</Text>
                   {friends.filter(friend => !friend.active).map((friend, index) => (
                     <FriendCard 
                       key={index} 

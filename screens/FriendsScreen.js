@@ -37,7 +37,7 @@ export default function FriendsScreen() {
             <View style={styles.headerSection}>
                 <View style={styles.headerRow}>
                     <Text style={[theme.fonts.h1, { marginRight: 'auto'}]}>Studdybuddies</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => {navigation.navigate('NotificationScreen')}}>
                         <NotificationIcon />
                     </TouchableOpacity>
                 </View>
