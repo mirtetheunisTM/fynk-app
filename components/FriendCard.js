@@ -1,27 +1,29 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import theme from '../theme';
 import ProgressBar from './ProgressBar';
 
-export default function FriendCard({ profileImage, friendName, level, streak, progress }) {
+export default function FriendCard({ profileImage, friendName, level, streak, progress, active, onPress }) {
   return (
-    <View style={styles.container}>
-      {/* Profile Picture */}
-      <Image source={profileImage} style={styles.avatar} />
+    <TouchableOpacity onPress={onPress}>
+      <View style={[styles.container, !active && styles.inactive]}>
+        {/* Profile Picture */}
+        <Image source={profileImage} style={styles.avatar} />
 
-      {/* Name + Level */}
-      <View style={styles.textSection}>
-        <Text style={[theme.fonts.body, styles.name]}>{friendName}</Text>
-        <Text style={theme.fonts.caption}>{level}</Text>
-        <ProgressBar progress={progress} style={{ height: 12 }}/>
-      </View>
+        {/* Name + Level */}
+        <View style={styles.textSection}>
+          <Text style={[theme.fonts.body, styles.name]}>{friendName}</Text>
+          <Text style={theme.fonts.caption}>{level}</Text>
+          <ProgressBar progress={progress} style={{ height: 12 }} />
+        </View>
 
-      {/* Time Ago + Like */}
-      <View style={styles.sideSection}>
-        <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{streak}</Text>
-        <Ionicons name="flame" size={16} color={theme.colors.primaryPurple} />
+        {/* Streak */}
+        <View style={styles.sideSection}>
+          <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{streak}</Text>
+          <Ionicons name="flame" size={16} color={theme.colors.primaryPurple} />
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -33,6 +35,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.creme,
     borderRadius: 16,
     marginBottom: 16,
+  },
+  inactive: {
+    opacity: 0.8, 
   },
   avatar: {
     width: 64,

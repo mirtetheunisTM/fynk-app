@@ -1,12 +1,23 @@
-// set up base of screen
 import { LinearGradient } from "expo-linear-gradient";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import BackButton from "../components/BackButton";
 import FriendCard from "../components/FriendCard";
+import FriendProfileModal from "../components/FriendProfileModal";
 import SearchBar from "../components/SearchBar";
 import theme from "../theme";
 
 export default function AllFriendsScreen() {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedFriend, setSelectedFriend] = useState(null);
+
+    const friends = [
+      { profileImage: require("../assets/images/Robbe.jpg"), friendName: "Robbe", level: "Goldfish", streak: "3", progress: 0.6, active: true },
+      { profileImage: require("../assets/images/Ella.jpg"), friendName: "Ella", level: "Einstein", streak: "15", progress: 0.3, active: true },
+      { profileImage: require("../assets/images/Laura.jpg"), friendName: "Laura", level: "Monkey Brain", streak: "6", progress: 0.9, active: false },
+      { profileImage: require("../assets/images/Sam.jpg"), friendName: "Sam", level: "Baby Brain", streak: "2", progress: 0.5, active: false },
+    ];
+
     return (
         <View style={styles.container}>
             {/* Background gradient */}
@@ -26,22 +37,47 @@ export default function AllFriendsScreen() {
                 <Image source={require("../assets/images/mascottes/friends.png")} style={styles.img} />
             </View>
 
-            {/* Online section */}
-            <View style={styles.section}>
-                <Text style={[theme.fonts.h3, { marginBottom: 16 }]}>Online</Text>
-                <FriendCard profileImage={require("../assets/images/Robbe.jpg")} friendName="Robbe" level="Goldfish" streak="3" progress={0.6} />
-                <FriendCard profileImage={require("../assets/images/Ella.jpg")} friendName="Ella" level="Einstein" streak="15" progress={0.3} />
-            </View>
+            <ScrollView>
+              {/* Online section */}
+              <View style={styles.section}>
+                  <Text style={[theme.fonts.h3, { marginBottom: 16 }]}>Online</Text>
+                  {friends.filter(friend => friend.active).map((friend, index) => (
+                    <FriendCard 
+                      key={index} 
+                      {...friend} 
+                      onPress={() => { setSelectedFriend(friend); setModalVisible(true); }} 
+                    />
+                  ))}
+              </View>
 
-            {/* Offline section */}
-            <View style={styles.section}>
-                <Text style={theme.fonts.h3}>Offline</Text>
-            </View>
+              {/* Offline section */}
+              <View style={styles.section}>
+                  <Text style={theme.fonts.h3}>Offline</Text>
+                  {friends.filter(friend => !friend.active).map((friend, index) => (
+                    <FriendCard 
+                      key={index} 
+                      {...friend} 
+                      onPress={() => { setSelectedFriend(friend); setModalVisible(true); }} 
+                    />
+                  ))}
+              </View>
+            </ScrollView>
+
+            {/* Modal - Wordt geopend bij klik op een FriendCard */}
+            {selectedFriend && (
+              <FriendProfileModal 
+                visible={modalVisible} 
+                onClose={() => setModalVisible(false)} 
+                user={selectedFriend}
+                friendshipStatus="none"
+              />
+            )}
         </View>
     );
 }
 
-const styles = StyleSheet.create({gradientBackground: {
+const styles = StyleSheet.create({
+  gradientBackground: {
     ...StyleSheet.absoluteFillObject,
     opacity: 0.2,
     zIndex: 0,

@@ -1,16 +1,12 @@
-import { Feather } from '@expo/vector-icons';
+// friendshipStatus: 'pending', 'friends', 'none'
+
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import theme from '../theme';
 import PrimaryButton from './PrimaryButton';
 import ProgressBar from './ProgressBar';
 
-export default function FriendProfileModal({
-  visible,
-  onClose,
-  user,
-  onSendRequest,
-  friendshipStatus, // 'none', 'pending', 'friends'
-}) {
+export default function FriendProfileModal({ visible, onClose, user, friendshipStatus }) {
   if (!user) return null;
 
   // Button config based on friendship status
@@ -36,6 +32,11 @@ export default function FriendProfileModal({
 
   const { title, style: buttonStyle } = getButtonProps();
 
+  const onSendRequest = () => {
+    friendshipStatus = 'pending';
+  };
+
+
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
@@ -46,37 +47,42 @@ export default function FriendProfileModal({
           </TouchableOpacity>
 
           {/* Avatar */}
-          <Image source={{ uri: user.avatar }} style={styles.avatar} />
+          <Image source={user.profileImage} style={styles.avatar} />
 
           {/* Name */}
-          <Text style={[theme.fonts.h2, { marginTop: 8 }]}>{user.name}</Text>
+          <Text style={[theme.fonts.h3, { marginTop: 8 }]}>{user.friendName}</Text>
 
           {/* Followers */}
-          <Text style={styles.followers}>
-            🧠🧠🧠 followed by <Text style={styles.bold}>David</Text> and{' '}
+          <Text style={theme.fonts.caption}>
+            🧠🧠🧠 buddies with <Text style={styles.bold}>David</Text> and{' '}
             <Text style={styles.bold}>2 others</Text>
           </Text>
 
           {/* XP Section */}
           <View style={styles.row}>
-            <Text style={theme.fonts.body}>Big Brain</Text> {/* user.level */}
-            <ProgressBar progress={user.xp / 10} />
-            <Text style={[theme.fonts.body, styles.xpText]}>
-              {user.streak} 🔥
-            </Text>
+            <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{user.level}</Text>
+            <ProgressBar progress={user.progress} style={{ width: 180 }}/>
+            <View style={styles.xpContainer}>
+              <Text style={[theme.fonts.caption, styles.xpText]}>
+                {user.streak}
+              </Text>
+              <Ionicons name="flame" size={16} color={theme.colors.primaryPurple} style={{ marginLeft: -4 }}/>
+            </View>
           </View>
 
           {/* Focus Mode */}
           <View style={[styles.row, { marginTop: 12 }]}>
-            <Text style={theme.fonts.body}>Best FocusMode :</Text>
-            <View style={styles.focusModeTag}>
-              <Text style={{ fontSize: 16 }}>🧘</Text>
-              <Text style={[theme.fonts.caption, { marginLeft: 4 }]}>MonkMode</Text>
+            <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>Best FocusMode :</Text>
+            <View style={styles.focusModeContainer}>
+              <Image source={require('../assets/images/mascottes/monkmode.png')} style={styles.focusModeAvatar} />
+              <View style={styles.focusModeTag}>
+                <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>MonkMode</Text>
+              </View>
             </View>
           </View>
 
           {/* Primary Button */}
-          <PrimaryButton title={title} style={[styles.button, buttonStyle]} onPress={onSendRequest} />
+          <PrimaryButton title={title} style={[styles.button, buttonStyle]} onPress={onSendRequest()} />
         </View>
       </View>
     </Modal>
@@ -91,10 +97,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   container: {
-    backgroundColor: '#fff',
-    padding: 24,
-    width: 320,
-    borderRadius: 24,
+    backgroundColor: theme.colors.creme,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    width: '90%',
+    borderRadius: 16,
     alignItems: 'center',
     position: 'relative',
   },
@@ -104,9 +111,11 @@ const styles = StyleSheet.create({
     right: 16,
   },
   avatar: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
     borderRadius: 40,
+    borderWidth: 3,
+    borderColor: theme.colors.lila,
   },
   followers: {
     marginTop: 4,
@@ -127,6 +136,7 @@ const styles = StyleSheet.create({
   xpText: {
     minWidth: 28,
     textAlign: 'right',
+    fontWeight: 'bold',
   },
   focusModeTag: {
     flexDirection: 'row',
@@ -142,6 +152,19 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 16,
+  },
+  focusModeAvatar: {
+    width: 18,
+    height: 18,
+  },
+  focusModeContainer: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+  xpContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
 });
 
