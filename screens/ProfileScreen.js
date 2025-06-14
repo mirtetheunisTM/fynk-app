@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import EmptyState from '../components/EmptyState';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
@@ -139,10 +139,10 @@ export default function AccountScreen() {
           <>
           {/* Empty state */}
           {sessionData.length === 0 && (
-            <View style={{gap: 24}}>
+            <ScrollView style={{flex: 1}}>
               <EmptyState page="sessions" message="You have no sessions yet, start focussing and see your latest session!" />
-              <PrimaryButton title="Start a Session" onPress={() => navigation.navigate('Home')} />
-            </View>
+              <PrimaryButton title="Start a Session" onPress={() => navigation.navigate('Home')} style={{marginTop: 24}}/>
+            </ScrollView>
           )}
 
           {/* Session Cards */}

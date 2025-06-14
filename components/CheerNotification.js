@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
   },
   description: {
     flexWrap: 'wrap',
+    marginRight: 8,
   },
   sideSection: {
     alignItems: 'flex-end',
