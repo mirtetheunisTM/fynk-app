@@ -1,6 +1,7 @@
 // friendshipStatus: 'pending', 'friends', 'none'
 
 import { Feather, Ionicons } from '@expo/vector-icons';
+import { useState } from 'react';
 import { Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import theme from '../theme';
 import PrimaryButton from './PrimaryButton';
@@ -8,10 +9,11 @@ import ProgressBar from './ProgressBar';
 
 export default function FriendProfileModal({ visible, onClose, user, friendshipStatus }) {
   if (!user) return null;
+  const [friendStatus, setFriendStatus] = useState(friendshipStatus);
 
   // Button config based on friendship status
   const getButtonProps = () => {
-    switch (friendshipStatus) {
+    switch (friendStatus) {
       case 'pending':
         return {
           title: 'Request pending',
@@ -33,7 +35,7 @@ export default function FriendProfileModal({ visible, onClose, user, friendshipS
   const { title, style: buttonStyle } = getButtonProps();
 
   const onSendRequest = () => {
-    friendshipStatus = 'pending';
+    setFriendStatus('pending');
   };
 
 
@@ -82,7 +84,7 @@ export default function FriendProfileModal({ visible, onClose, user, friendshipS
           </View>
 
           {/* Primary Button */}
-          <PrimaryButton title={title} style={[styles.button, buttonStyle]} onPress={onSendRequest()} />
+          <PrimaryButton title={title} style={[styles.button, buttonStyle]} onPress={() => onSendRequest()} />
         </View>
       </View>
     </Modal>
