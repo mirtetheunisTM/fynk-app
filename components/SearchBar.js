@@ -1,7 +1,10 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Image, StyleSheet, TextInput, View } from 'react-native';
 import theme from '../theme';
 
 export default function SearchBar() {
+  const [searchQuery, setSearchQuery] = useState('');
+
   return (
     <View style={styles.container}>
       <Image
@@ -9,10 +12,16 @@ export default function SearchBar() {
         style={styles.icon}
         resizeMode="contain"
       />
-      <Text style={[theme.fonts.body, styles.placeholder]}>Search</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Search"
+        placeholderTextColor="rgba(28, 33, 51, 0.6)"
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -22,7 +31,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 15,
     paddingVertical: 15,
-    alignSelf: 'left',
     width: '100%',
   },
   icon: {
@@ -30,8 +38,9 @@ const styles = StyleSheet.create({
     height: 24,
     marginRight: 10,
   },
-  placeholder: {
-    color: 'rgba(28, 33, 51, 0.6)',
+  input: {
     flex: 1,
+    fontSize: 16,
+    color: theme.colors.darkBlue,
   },
 });
