@@ -13,6 +13,7 @@ const colors = {
     creme: "#F2F2F2",
     lila: "#ECE7FF",
     neutral: "#FCFCFC",
+    red: "#FF676A",
 };
 
 const fonts = StyleSheet.create({

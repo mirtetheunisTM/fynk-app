@@ -68,7 +68,10 @@ export default function LoginScreen() {
       </View>
 
       {/* Error Message */}
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+      {errorMessage ? 
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      </View> : null}
 
       {/* Section 2: Input Fields */}
       <View style={styles.section2}>
@@ -131,10 +134,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     justifyContent: 'space-between',
   },
+  errorContainer: {
+    marginBottom: 20,
+    padding: 8,
+    backgroundColor: theme.colors.red,
+    borderRadius: 8,
+  },
   errorText: {
-    color: 'red',
-    textAlign: 'center',
-    marginBottom: 16,
+    color: theme.colors.darkBlue,
+    textAlign: 'left',
+    maringLeft: 8, 
   },
   section1: {
     flexDirection: 'row',
