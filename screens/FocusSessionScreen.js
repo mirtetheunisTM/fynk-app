@@ -4,16 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef, useState } from 'react';
-import {
-  Animated,
-  FlatList,
-  Image,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Animated, FlatList, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
 import SecondaryButton from '../components/SecondaryButton';
 import TodoItemComplete from '../components/TodoItemComplete';
@@ -72,7 +63,7 @@ export default function FocusSessionScreen() {
 
   // Timer functions
   useEffect(() => {
-    if (timeLeft === null) {
+    if (timeLeft === 0) {
         finishSession(true);
     };
 
@@ -92,6 +83,10 @@ export default function FocusSessionScreen() {
   }, []);
 
   useEffect(() => {
+    if (timeLeft === 0) {
+      finishSession(true);
+    }
+
     if (timeLeft !== null && selectedFocusMode.focus_time?.minutes) {
       const total = selectedFocusMode.focus_time?.minutes * 60;
       Animated.timing(progress, {
@@ -109,8 +104,10 @@ export default function FocusSessionScreen() {
     : null;
 
   const breakTime = selectedFocusMode.break_time?.minutes;
+  const sessionStartTime = useRef(dayjs());
+  const breakEndTime = sessionStartTime.current.add(breakTime, 'minutes').format('HH:mm');
   const breakText = breakTime
-    ? `Next ${breakTime} min break → ${dayjs().add(breakTime, 'minutes').format('HH:mm')}`
+    ? `Next ${breakTime} min break → ${breakEndTime}`
     : 'Finish your task → done';
 
   const focusText = selectedFocusMode.focus_time?.minutes
@@ -197,6 +194,7 @@ export default function FocusSessionScreen() {
         >
         <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
+            <Text style={[theme.fonts.h2, { marginBottom: 16 }]}>Tasks</Text>
             <FlatList
                 data={tasks}
                 keyExtractor={(item) => item.task_id}
@@ -348,12 +346,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingTop: 60,
+    paddingTop: 80,
     backgroundColor: 'rgba(196, 207, 255, 0.1)',
   },
   modalContainer: {
     width: '90%',
-    backgroundColor: theme.colors.lightPurple,
+    backgroundColor: theme.colors.lila,
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 16,

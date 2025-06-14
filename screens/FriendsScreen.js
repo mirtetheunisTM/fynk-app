@@ -24,7 +24,7 @@ export default function FriendsScreen() {
     const navigation = useNavigation();
 
        return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             {/* Background gradient */}
             <LinearGradient
                 colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
@@ -84,7 +84,7 @@ export default function FriendsScreen() {
                 />
 
             </View>
-        </View>
+        </ScrollView>
     );
 }
 

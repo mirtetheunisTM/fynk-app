@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 12,
     paddingTop: 12,
-    paddingBottom: 4,
+    paddingBottom: 12,
     marginBottom: 16,
     borderWidth: 2,
     borderColor: 'transparent',

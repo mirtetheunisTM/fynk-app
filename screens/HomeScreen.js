@@ -3,6 +3,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useCallback, useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import EmptyState from '../components/EmptyState';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
 import SecondaryButton from '../components/SecondaryButton';
@@ -169,7 +170,13 @@ export default function HomeScreen() {
         </View>
       </View>
 
+      {tasks.length === 0 && !lastSession && (
+        <EmptyState message="Start using the app to fill this screen!" page="home" />
+      )}
+
+
       {/* Upcoming Tasks */}
+      {lastSession && 
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={theme.fonts.h3}>Your upcoming tasks</Text>
@@ -180,15 +187,19 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {tasks.map((task) => (
-          <View key={task.id} style={[styles.task, { backgroundColor: task.color }]}>
+        
+        {tasks.length === 0 ? (
+          <Text style={theme.fonts.body}>You have no upcoming todos.</Text>
+        ) : (
+        tasks.map((task) => (
+          <View key={task.task_id} style={[styles.task, { backgroundColor: task.color }]}>
             <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>{task.title}</Text>
             <View style={styles.dueBadge}>
               <Text style={[theme.fonts.caption, { color: theme.colors.neutral }]}>Due {task.due_date}</Text>
             </View>
           </View>
-        ))}
-      </View>
+        )))}
+      </View>}
 
       {/* Last session */}
       {lastSession && (
