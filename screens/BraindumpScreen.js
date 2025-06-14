@@ -3,6 +3,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import EmptyState from "../components/EmptyState";
 import PrimaryButton from "../components/PrimaryButton";
 import TaskDropdown from "../components/TasksDropDown";
 import theme from "../theme";
@@ -86,7 +87,14 @@ export default function BraindumpScreen() {
 			<Text style={[theme.fonts.h3, { marginBottom: 24 }]}>Your todo list</Text>
 			{loading && <ActivityIndicator size="large" color={theme.colors.primaryPurple} />}
 			{error && <Text style={{ color: "red" }}>{error}</Text>}
-			{!loading && !error && (
+
+			{/* Empty state */}
+			{!loading && !error && tasks.length === 0 && (
+				<EmptyState page="tasks" message="Nothing to see here. You haven’t created any tasks." />
+			)}
+
+			{/* Todo list with categories */}
+			{!loading && !error && tasks.length > 0 && (
 				<FlatList
 					data={CATEGORIES}
 					keyExtractor={(item) => item.id}

@@ -1,23 +1,22 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
-
+import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useState } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import EmptyState from '../components/EmptyState';
+import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
 import SessionCard from '../components/SessionCard';
 import ShopTabs from '../components/ShopTabs';
 import theme from '../theme';
 
 export default function AccountScreen() {
+  const navigation = useNavigation();
+
   const [tab, setTab] = useState(0);
 
   const sessionData = [
-    {
+    /*{
       image: require('../assets/images/mascottes/beastmode.png'),
       name: 'You',
       sessionDescription: 'Completed a Beast Mode Session',
@@ -32,7 +31,7 @@ export default function AccountScreen() {
       timeAgo: '02-05',
       cheeredBy: 'John',
       othersCount: 5,
-    },
+    },*/
   ];
 
   return (
@@ -99,7 +98,14 @@ export default function AccountScreen() {
         {/* Tab Content */}
         {tab === 0 ? (
           <>
-            {sessionData.map((session, index) => (
+          {/* Empty state */}
+          {sessionData.length === 0 && (
+            <View style={{gap: 24}}>
+              <EmptyState page="sessions" message="You have no sessions yet, start focussing and see your latest session!" />
+              <PrimaryButton title="Start a Session" onPress={() => navigation.navigate('Home')} />
+            </View>
+          )}
+            {sessionData.length > 0 && sessionData.map((session, index) => (
               <View key={index} style={styles.sessionBlock}>
                 <SessionCard
                   profileImage={session.image}

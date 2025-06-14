@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import NotificationIcon from '../assets/icons/NotificationIcon';
+import EmptyState from '../components/EmptyState';
 import FriendAvatar from '../components/FriendAvatar';
 import SearchBar from '../components/SearchBar';
 import SessionCard from '../components/SessionCard';
@@ -24,7 +25,7 @@ export default function FriendsScreen() {
     const navigation = useNavigation();
 
        return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             {/* Background gradient */}
             <LinearGradient
                 colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
@@ -44,7 +45,13 @@ export default function FriendsScreen() {
                 <SearchBar />
             </View>
 
+            {/* Empty State */}
+            {friends.length === 0 && (
+                <EmptyState page="friends" message="There are no buddies on your list yet. Go find some!" />
+            )}
+
             {/* Now focussing */}
+            {friends.length > 0 && 
             <View style={styles.focusSection}>
                 <View style={styles.headerRow}>
                     <Text style={[theme.fonts.h3, { marginRight: 'auto'}]}>Now focussing</Text>
@@ -65,10 +72,10 @@ export default function FriendsScreen() {
                         ))}
                     </View>
                 </ScrollView>
-            </View>
+            </View>}
 
             {/* Sessions */}
-            <View style={styles.sessionsSection}>
+            {friends.length > 0 && <View style={styles.sessionsSection}>
                 <SessionCard
                     profileImage={require('../assets/images/Ella.jpg')}
                     friendName="Ella"
@@ -83,8 +90,8 @@ export default function FriendsScreen() {
                     timeAgo="3h ago"
                 />
 
-            </View>
-        </ScrollView>
+            </View>}
+        </View>
     );
 }
 

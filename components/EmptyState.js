@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
         width: 270,
         height: 270,
         marginBottom: 12,
+        resizeMode: "contain",
     },
     message: {
         textAlign: "center",
