@@ -2,7 +2,6 @@ import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import theme from "../theme";
-import TodoItemComplete from "./TodoItemComplete";
 
 const importanceLabels = {
   1: "Low",
@@ -11,7 +10,7 @@ const importanceLabels = {
   4: "Critical",
 };
 
-export default function TaskDropdown({ title, color, tasks = [], priority }) {
+export default function TaskDropdown({ title, color, tasks = [], priority, onTaskPress }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -38,9 +37,13 @@ export default function TaskDropdown({ title, color, tasks = [], priority }) {
             <Text style={theme.fonts.body}>Geen taken in deze categorie.</Text>
           ) : (
             tasks.map((task) => (
-              <View key={task.task_id}>
-                <TodoItemComplete text={task.title} taskId={task.task_id} />
-              </View>
+              <TouchableOpacity key={task.task_id} onPress={() => onTaskPress(task)}>
+                <View style={styles.taskCard}>
+                  <Text style={[theme.fonts.body, styles.taskCardTitle]}>
+                    {task.title}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             ))
           )}
         </View>
@@ -84,5 +87,21 @@ const styles = StyleSheet.create({
   dropdownContent: {
     marginTop: 16,
     gap: 12,
+  },
+  taskCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    paddingVertical: 18,
+    paddingHorizontal: 20,
+    marginBottom: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  taskCardTitle: {
+    color: "#1C2133",
+    fontWeight: "500",
+    fontSize: 18,
+    flex: 1,
   },
 });

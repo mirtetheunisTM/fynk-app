@@ -5,7 +5,9 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import EmptyState from "../components/EmptyState";
 import PrimaryButton from "../components/PrimaryButton";
+import TaskDetailModal from "../components/TaskDetailModal";
 import TaskDropdown from "../components/TasksDropDown";
+import WarningPopup from "../components/WarningPopup";
 import theme from "../theme";
 
 const CATEGORIES = [
@@ -23,6 +25,9 @@ export default function BraindumpScreen() {
 	const [tasks, setTasks] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [selectedTask, setSelectedTask] = useState(null);
+	const [modalVisible, setModalVisible] = useState(false);
+	const [showWarning, setShowWarning] = useState(false);
 
 	const fetchTasks = async () => {
 		try {
@@ -70,7 +75,32 @@ export default function BraindumpScreen() {
 	);
 
 	const getTasksForCategory = (categoryId) =>
-	  tasks.filter(task => task.urgency_type.toLowerCase() === categoryId.toLowerCase());
+	  tasks.filter(task => String(task.category_id) === String(categoryId));
+
+	const handleDelete = () => setShowWarning(true);
+	const confirmDelete = async () => {
+	  if (!selectedTask) return;
+	  try {
+	    const token = await AsyncStorage.getItem("authToken");
+	    const response = await fetch(`https://fynk-backend.onrender.com/tasks/${selectedTask.task_id}`, {
+	      method: "DELETE",
+	      headers: {
+	        "Authorization": `Bearer ${token}`,
+	        "Content-Type": "application/json"
+	      }
+	    });
+	    if (response.ok) {
+	      // Refresh takenlijst
+	      fetchTasks();
+	    } else {
+	      setError("Verwijderen mislukt.");
+	    }
+	  } catch (e) {
+	    setError("Verwijderen mislukt.");
+	  }
+	  setShowWarning(false);
+	  setModalVisible(false);
+	};
 
 	return (
 		<View style={styles.container}>
@@ -102,8 +132,12 @@ export default function BraindumpScreen() {
 						<TaskDropdown
 							title={category.title}
 							color={category.color}
-							priority={category.priority} // <-- priority altijd meegeven!
-							tasks={getTasksForCategory(category.title)}
+							priority={category.priority}
+							tasks={getTasksForCategory(category.id)}
+							onTaskPress={(task) => {
+								setSelectedTask(task);
+								setModalVisible(true);
+							}}
 						/>
 					)}
 					contentContainerStyle={{ gap: 16, marginBottom: 32 }}
@@ -114,6 +148,19 @@ export default function BraindumpScreen() {
 				title="Add task"
 				onPress={() => navigation.navigate("AddTask")}
 				style={styles.addButton}
+			/>
+			<TaskDetailModal
+				visible={modalVisible}
+				onClose={() => setModalVisible(false)}
+				task={selectedTask}
+				onDelete={handleDelete}
+				onEdit={() => {/* navigeer naar edit-scherm of open edit-modal */}}
+			/>
+			<WarningPopup
+				visible={showWarning}
+				onCancel={() => setShowWarning(false)}
+				onConfirm={confirmDelete}
+				message="Weet je zeker dat je deze taak wilt verwijderen?"
 			/>
 		</View>
 	);
