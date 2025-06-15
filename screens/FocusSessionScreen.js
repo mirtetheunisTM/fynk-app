@@ -63,18 +63,18 @@ export default function FocusSessionScreen() {
 
   // Timer functions
   useEffect(() => {
-    if (timeLeft === 0) {
+    if (selectedFocusMode.focus_time?.minutes && timeLeft === 0) {
         finishSession(true);
     };
 
     intervalRef.current = setInterval(() => {
         if (!isPausedRef.current) {
             setTimeLeft(prev => {
-            if (selectedFocusMode.focus_time?.minutes) {
-                return prev <= 1 ? 0 : prev - 1; // Normale aftelling
-            } else {
-                return prev + 1; // Optellen als er geen focus tijd is
-            }
+                if (selectedFocusMode.focus_time?.minutes) {
+                    return prev <= 1 ? 0 : prev - 1; // Normale aftelling
+                } else {
+                    return prev + 1; // Continue counting up
+                }
             });
         }
     }, 1000);
@@ -83,7 +83,7 @@ export default function FocusSessionScreen() {
   }, []);
 
   useEffect(() => {
-    if (timeLeft === 0) {
+    if (selectedFocusMode.focus_time?.minutes && timeLeft === 0) {
       finishSession(true);
     }
 
