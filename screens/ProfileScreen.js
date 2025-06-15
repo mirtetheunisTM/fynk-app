@@ -22,6 +22,8 @@ export default function AccountScreen() {
 
   const API_URL = "https://fynk-backend.onrender.com/sessions";
 
+  //
+
   // Fetch sessions
   const fetchSessions = async () => {
     try {

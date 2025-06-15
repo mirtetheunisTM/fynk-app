@@ -92,10 +92,34 @@ export default function StatisticsTab() {
                     <Text style={[theme.fonts.caption, { marginBottom: 4, fontWeight: 'bold' }]}>Average Focus Session</Text>
                     <View style={styles.infoRow}>
                     <View style={styles.timeTag}>
-                        <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{Math.round(stats.averageFocusSession)} min</Text>
+                        <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{Math.round(stats.avgSessionDuration)} min</Text>
                     </View>
                     <View style={styles.chartPlaceholder}>
-                        <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>|||</Text>
+                        {Array.from({ length: 4 }).map((_, rowIndex) => (
+                            <View key={rowIndex} style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                                {Array.from({ length: 13 }).map((_, colIndex) => {
+                                    const intensity = Math.floor(Math.random() * 5); // Random intensity for placeholder
+                                    const color = [
+                                        '#D1C4E9', // Light Purple
+                                        '#9575CD', // Medium Purple
+                                        '#673AB7', // Dark Purple
+                                        '#512DA8', // Deep Purple
+                                        '#311B92'  // Primary Purple
+                                    ][intensity];
+                                    return (
+                                        <View
+                                            key={colIndex}
+                                            style={{
+                                                width: 12,
+                                                height: 12,
+                                                margin: 1,
+                                                backgroundColor: color,
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </View>
+                        ))}
                     </View>
                     </View>
                 </View>
@@ -168,11 +192,10 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   chartPlaceholder: {
-    height: 40,
-    marginTop: 8,
+    height: 55,
     backgroundColor: theme.colors.lightPurple,
     borderRadius: 8,
-    opacity: 0.3,
+    opacity: 0.5,
     width: '55%',
   },
   infoRow: {
