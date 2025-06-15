@@ -1,5 +1,6 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import BackButton from "../components/BackButton";
 import FriendCard from "../components/FriendCard";
@@ -10,6 +11,8 @@ import theme from "../theme";
 export default function AllFriendsScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedFriend, setSelectedFriend] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredFriends, setFilteredFriends] = useState([]); // Initialize with an empty array
 
     const friends = [
       { profileImage: require("../assets/images/Robbe.jpg"), friendName: "Robbe", level: "Goldfish", streak: "3", progress: 0.6, active: true },
@@ -17,6 +20,43 @@ export default function AllFriendsScreen() {
       { profileImage: require("../assets/images/Laura.jpg"), friendName: "Laura", level: "Monkey Brain", streak: "6", progress: 0.9, active: false },
       { profileImage: require("../assets/images/Sam.jpg"), friendName: "Sam", level: "Baby Brain", streak: "2", progress: 0.5, active: false },
     ];
+
+    const searchFriends = async (query) => {
+        try {
+            const token = await AsyncStorage.getItem("authToken");
+
+            if (!token) {
+                console.error("Geen token gevonden. Log in opnieuw.");
+                return;
+            }
+
+            const response = await fetch("https://fynk-backend.onrender.com/friends/search", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username: query }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setFilteredFriends(data.data || []);
+            } else {
+                console.error("Fout bij zoeken naar vrienden.");
+            }
+        } catch (err) {
+            console.error("Error searching friends:", err);
+        }
+    };
+
+    useEffect(() => {
+        if (searchQuery.trim() === "") {
+            setFilteredFriends(friends || []); // Ensure friends is defined
+        } else {
+            searchFriends(searchQuery);
+        }
+    }, [searchQuery]);
 
     return (
         <View style={styles.container}>
@@ -33,34 +73,64 @@ export default function AllFriendsScreen() {
                     <BackButton />
                     <Text style={[theme.fonts.h1, styles.title]}>All studybuddies</Text>
                 </View>
-                <SearchBar />
+                <SearchBar onChangeText={(query) => {
+                    setSearchQuery(query);
+                    console.log("Search query updated:", query);
+                }} />
                 <Image source={require("../assets/images/mascottes/friends.png")} style={styles.img} />
             </View>
 
             <ScrollView>
-              {/* Online section */}
-              <View style={styles.section}>
-                  <Text style={[theme.fonts.h3, { marginBottom: 16 }]}>Online</Text>
-                  {friends.filter(friend => friend.active).map((friend, index) => (
-                    <FriendCard 
-                      key={index} 
-                      {...friend} 
-                      onPress={() => { setSelectedFriend(friend); setModalVisible(true); }} 
-                    />
-                  ))}
-              </View>
+              {searchQuery.trim() === "" ? (
+                // Show Online and Offline sections when no search query
+                <>
+                  <View style={styles.section}>
+                      <Text style={[theme.fonts.h3, { marginBottom: 16 }]}>Online</Text>
+                      {filteredFriends.filter(friend => friend.active).map((friend, index) => (
+                        <FriendCard 
+                          key={index} 
+                          profileImage={friend.profileImage || require("../assets/images/Ella.jpg")}
+                          friendName={friend.name || "Ella"}
+                          level={friend.level || "Einstein"}
+                          streak={friend.streak || "0"}
+                          progress={friend.progress || 0}
+                          active={friend.active}
+                          onPress={() => { setSelectedFriend(friend); setModalVisible(true); }} 
+                        />
+                      ))}
+                  </View>
 
-              {/* Offline section */}
-              <View style={styles.section}>
-                  <Text style={[theme.fonts.h3, { marginBottom: 16 }]}>Offline</Text>
-                  {friends.filter(friend => !friend.active).map((friend, index) => (
-                    <FriendCard 
-                      key={index} 
-                      {...friend} 
-                      onPress={() => { setSelectedFriend(friend); setModalVisible(true); }} 
-                    />
-                  ))}
-              </View>
+                  <View style={styles.section}>
+                      <Text style={[theme.fonts.h3, { marginBottom: 16 }]}>Offline</Text>
+                      {filteredFriends.filter(friend => !friend.active).map((friend, index) => (
+                        <FriendCard 
+                          key={index} 
+                          profileImage={friend.profileImage || require("../assets/images/Robbe.jpg")}
+                          friendName={friend.friendName || "Unknown"}
+                          level={friend.level || "Einstein"}
+                          streak={friend.streak || "0"}
+                          progress={friend.progress || 0}
+                          active={friend.active}
+                          onPress={() => { setSelectedFriend(friend); setModalVisible(true); }} 
+                        />
+                      ))}
+                  </View>
+                </>
+              ) : (
+                // Show only search results when a query is entered
+                filteredFriends.map((friend, index) => (
+                  <FriendCard 
+                    key={index} 
+                    profileImage={friend.profileImage || require("../assets/images/Robbe.jpg")}
+                    friendName={friend.name || "Ella"}
+                    level={friend.level || "Einstein"}
+                    streak={friend.streak || "0"}
+                    progress={friend.progress || 0}
+                    active={friend.active}
+                    onPress={() => { setSelectedFriend(friend); setModalVisible(true); }} 
+                  />
+                ))
+              )}
             </ScrollView>
 
             {/* Modal - Wordt geopend bij klik op een FriendCard */}
@@ -68,7 +138,11 @@ export default function AllFriendsScreen() {
               <FriendProfileModal 
                 visible={modalVisible} 
                 onClose={() => setModalVisible(false)} 
-                user={selectedFriend}
+                user={{
+                  profileImage: require("../assets/images/Ella.jpg"),
+                  friendName: selectedFriend.friendName || "Ella",
+                  level: "Einstein",
+                }}
                 friendshipStatus="none"
               />
             )}

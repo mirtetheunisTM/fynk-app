@@ -2,8 +2,15 @@ import { useState } from 'react';
 import { Image, StyleSheet, TextInput, View } from 'react-native';
 import theme from '../theme';
 
-export default function SearchBar() {
+export default function SearchBar({ onChangeText }) {
   const [searchQuery, setSearchQuery] = useState('');
+
+  const handleChangeText = (text) => {
+    setSearchQuery(text);
+    if (onChangeText) {
+      onChangeText(text);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -17,7 +24,7 @@ export default function SearchBar() {
         placeholder="Search"
         placeholderTextColor="rgba(28, 33, 51, 0.6)"
         value={searchQuery}
-        onChangeText={setSearchQuery}
+        onChangeText={handleChangeText}
       />
     </View>
   );
