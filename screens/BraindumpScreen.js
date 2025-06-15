@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import EmptyState from "../components/EmptyState";
 import PrimaryButton from "../components/PrimaryButton";
+import Success from "../components/Success";
 import TaskDetailModal from "../components/TaskDetailModal";
 import TaskDropdown from "../components/TasksDropDown";
 import WarningPopup from "../components/WarningPopup";
@@ -28,6 +29,7 @@ export default function BraindumpScreen() {
 	const [selectedTask, setSelectedTask] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [showWarning, setShowWarning] = useState(false);
+	const [showSuccess, setShowSuccess] = useState(false);
 
 	const fetchTasks = async () => {
 		try {
@@ -90,8 +92,8 @@ export default function BraindumpScreen() {
 	      }
 	    });
 	    if (response.ok) {
-	      // Refresh takenlijst
 	      fetchTasks();
+	      setShowSuccess(true); // <-- Toon succesmelding!
 	    } else {
 	      setError("Verwijderen mislukt.");
 	    }
@@ -101,6 +103,13 @@ export default function BraindumpScreen() {
 	  setShowWarning(false);
 	  setModalVisible(false);
 	};
+
+	useEffect(() => {
+		if (showSuccess) {
+			const timer = setTimeout(() => setShowSuccess(false), 2500);
+			return () => clearTimeout(timer);
+		}
+	}, [showSuccess]);
 
 	return (
 		<View style={styles.container}>
@@ -162,6 +171,15 @@ export default function BraindumpScreen() {
 				onConfirm={confirmDelete}
 				message="Weet je zeker dat je deze taak wilt verwijderen?"
 			/>
+			{showSuccess && (
+				<Success
+					title="Success!"
+					message="Task successfully deleted."
+					closable
+					onClose={() => setShowSuccess(false)}
+					toast
+				/>
+			)}
 		</View>
 	);
 }
