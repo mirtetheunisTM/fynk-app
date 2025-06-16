@@ -10,6 +10,7 @@ import EmptyState from '../components/EmptyState';
 import OverlayLoader from '../components/OverlayLoader';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
+import ProgressTab from '../components/ProgressTab';
 import SessionCard from '../components/SessionCard';
 import SessionDetailModal from '../components/SessionDetailModal';
 import ShopTabs from '../components/ShopTabs';
@@ -239,7 +240,7 @@ useEffect(() => {
         ) : tab === 2 ? (
           <StatisticsTab />
         ) : (
-          <Text style={[theme.fonts.caption, { textAlign: 'center' }]}>No content available</Text>
+          <ProgressTab />
         )}
 
         {/* Session Detail Modal */}
