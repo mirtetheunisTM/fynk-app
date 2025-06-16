@@ -13,7 +13,7 @@ export default function ProductCard({ image, title, description, price, ...rest 
     >
       <Image source={image} style={styles.img} />
       <View style={styles.info}>
-        <Text style={[theme.fonts.body, styles.title]}>{title}</Text>
+        <Text style={theme.fonts.h3}>{title}</Text>
         <Text style={theme.fonts.caption}>{description}</Text>
       </View>
       <View style={styles.priceWrapper}>

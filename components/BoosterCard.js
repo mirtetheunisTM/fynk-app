@@ -7,12 +7,12 @@ export default function BoosterCard({ image, title, description, price, onActiva
     <View style={styles.card}>
       <Image source={image} style={styles.img} />
       <View style={styles.info}>
-        <Text style={[theme.fonts.body, styles.title]}>{title}</Text>
+        <Text style={theme.fonts.h3}>{title}</Text>
         <Text style={theme.fonts.caption}>{description}</Text>
       </View>
       <View style={styles.priceWrapper}>
-        <Text style={[theme.fonts.body, styles.price]}>{price}</Text>
-            <Image source={require("../assets/icons/CoinIcon.png")} style={styles.coin} />
+        <Text style={theme.fonts.h3}>{price}</Text>
+        <Image source={require("../assets/icons/CoinIcon.png")} style={styles.coin} />
       </View>
       {onActivate && (
         <PrimaryButton title="Activate" onPress={onActivate} style={{ marginTop: 8 }} />
