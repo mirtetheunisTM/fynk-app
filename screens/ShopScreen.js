@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
 import BalanceCard from "../components/BalanceCard";
 import BoosterCard from "../components/BoosterCard";
 import ProductCard from "../components/ProductCard";
@@ -38,8 +38,32 @@ const SHOP_PRODUCTS = [
   },
 ];
 
-const PURCHASED = [];
-const USED = [];
+const PURCHASED = [
+  {
+    id: "1",
+    image: require("../assets/images/mascottes/streak-freeze.png"),
+    title: "Streak freeze",
+    description: "Protects streak for 1 skipped day",
+    price: 1,
+  },
+  {
+    id: "3",
+    image: require("../assets/images/mascottes/weekend-warrior.png"),
+    title: "Weekend Warrior",
+    description: "+50% XP for a Saturday or Sunday session",
+    price: 1,
+  },
+];
+
+const USED = [
+  {
+    id: "1",
+    image: require("../assets/images/mascottes/streak-freeze.png"),
+    title: "Streak freeze",
+    description: "Protects streak for 1 skipped day",
+    price: 1,
+  },
+];
 
 export default function ShopScreen() {
   const [tab, setTab] = useState(0);
@@ -73,17 +97,28 @@ export default function ShopScreen() {
           showsVerticalScrollIndicator={false}
         />
       ) : (
-        <View>
+        <ScrollView
+          contentContainerStyle={styles.productsList}
+          showsVerticalScrollIndicator={false}
+        >
           <Text style={[theme.fonts.h3, { marginBottom: 8 }]}>Purchased</Text>
           <FlatList
             data={PURCHASED}
             numColumns={2}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
-              <BoosterCard {...item} onActivate={() => {}} />
+              <View style={styles.cardWrapper}>
+                <BoosterCard {...item} onActivate={() => {}} />
+              </View>
             )}
             columnWrapperStyle={styles.columnWrapper}
-            contentContainerStyle={styles.productsList}
+            scrollEnabled={false}
+            contentContainerStyle={{ paddingBottom: 8 }}
+            ListEmptyComponent={
+              <Text style={[theme.fonts.body, { color: "#888", textAlign: "center", marginVertical: 24 }]}>
+                You have no boosters yet.
+              </Text>
+            }
           />
           <Text style={[theme.fonts.h3, { marginVertical: 8 }]}>Used</Text>
           <FlatList
@@ -91,12 +126,20 @@ export default function ShopScreen() {
             numColumns={2}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
-              <BoosterCard {...item} />
+              <View style={styles.cardWrapper}>
+                <BoosterCard {...item} />
+              </View>
             )}
             columnWrapperStyle={styles.columnWrapper}
-            contentContainerStyle={styles.productsList}
+            scrollEnabled={false}
+            contentContainerStyle={{ paddingBottom: 32 }}
+            ListEmptyComponent={
+              <Text style={[theme.fonts.body, { color: "#888", textAlign: "center", marginVertical: 24 }]}>
+                No used boosters yet.
+              </Text>
+            }
           />
-        </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -118,9 +161,16 @@ const styles = StyleSheet.create({
   columnWrapper: {
     justifyContent: "space-between",
     gap: 12,
+    marginBottom: 16,
   },
   productsList: {
     paddingBottom: 32,
     paddingTop: 8,
+  },
+  cardWrapper: {
+    flex: 1,
+    maxWidth: "48%",
+    marginRight: 8,
+    marginBottom: 16,
   },
 });

@@ -6,16 +6,14 @@ export default function BoosterCard({ image, title, description, price, onActiva
   return (
     <View style={styles.card}>
       <Image source={image} style={styles.img} />
-      <View style={styles.info}>
-        <Text style={theme.fonts.h3}>{title}</Text>
-        <Text style={theme.fonts.caption}>{description}</Text>
-      </View>
-      <View style={styles.priceWrapper}>
-        <Text style={theme.fonts.h3}>{price}</Text>
+      <Text style={theme.fonts.h3}>{title}</Text>
+      <Text style={theme.fonts.caption}>{description}</Text>
+      <View style={styles.priceRow}>
+        <Text style={[theme.fonts.body, styles.price]}>{price}</Text>
         <Image source={require("../assets/icons/CoinIcon.png")} style={styles.coin} />
       </View>
       {onActivate && (
-        <PrimaryButton title="Activate" onPress={onActivate} style={{ marginTop: 8 }} />
+        <PrimaryButton title="Activate" onPress={onActivate} style={styles.button} />
       )}
     </View>
   );
@@ -24,30 +22,26 @@ export default function BoosterCard({ image, title, description, price, onActiva
 const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.creme,
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 24,
+    padding: 20,
     alignItems: "center",
-    width: "48%",
-    marginBottom: 16,
+    width: "100%",
+    minHeight: 220,
+    marginBottom: 0,
   },
   img: {
-    width: 64,
-    height: 64,
+    width: 80,
+    height: 80,
     marginBottom: 8,
     resizeMode: "contain",
+    backgroundColor: "#F1F1F1",
   },
-  info: {
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  title: {
-    fontWeight: "bold",
-  },
-  priceWrapper: {
+  priceRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    marginTop: 4,
+    marginTop: 8,
+    marginBottom: 8,
   },
   price: {
     fontWeight: "bold",
@@ -55,5 +49,9 @@ const styles = StyleSheet.create({
   coin: {
     width: 18,
     height: 18,
+  },
+  button: {
+    marginTop: 8,
+    alignSelf: "stretch",
   },
 });
