@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FormInput from '../components/FormInput';
+import OverlayLoader from '../components/OverlayLoader';
 import PrimaryButton from '../components/PrimaryButton';
 import theme from '../theme';
 
@@ -15,6 +16,7 @@ export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleLogin = async () => {
         setErrorMessage(''); // Clear previous errors
@@ -23,6 +25,8 @@ export default function LoginScreen() {
             setErrorMessage("Please enter both email and password.");
             return;
         }
+
+        setLoading(true);
 
         try {
             const response = await fetch(API_URL, {
@@ -43,11 +47,16 @@ export default function LoginScreen() {
             }
         } catch (error) {
             setErrorMessage(error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
   return (
     <View style={styles.container}>
+      {/* Loader Overlay */}
+      <OverlayLoader visible={loading} />
+
       {/* Background gradient */}
       <LinearGradient
           colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}

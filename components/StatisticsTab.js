@@ -4,14 +4,18 @@ import { useEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import theme from '../theme';
 import EmptyState from './EmptyState';
+import OverlayLoader from './OverlayLoader';
 import StatCard from './StatCard';
 
 const API_URL = "https://fynk-backend.onrender.com/stats"
 
 export default function StatisticsTab() {
     const [stats, setStats] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const fetchStats = async () => {
+        setLoading(true);
+
         try {
             const token = await AsyncStorage.getItem("authToken");
 
@@ -35,6 +39,8 @@ export default function StatisticsTab() {
             }
         } catch (error) {
             console.error("Kan statistieken niet ophalen:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -46,7 +52,7 @@ export default function StatisticsTab() {
         switch (mode) {
             case "Tick Tock": return require("../assets/images/mascottes/ticktock.png");
             case "Monk Mode": return require("../assets/images/mascottes/monkmode.png");
-            case "To Do Or Die": return require("../assets/images/mascottes/todoordie.png");
+            case "To Do or Die": return require("../assets/images/mascottes/todoordie.png");
             case "Work Hard Chill Harder": return require("../assets/images/mascottes/workhardchillharder.png");
             case "Beast Mode": return require("../assets/images/mascottes/beastmode.png");
             default: return require("../assets/images/mascottes/ticktock.png");
@@ -55,6 +61,9 @@ export default function StatisticsTab() {
 
   return (
     <ScrollView style={styles.container}>
+
+        {/* Loader Overlay */}
+        <OverlayLoader visible={loading} />
 
         {/* Empty state */}
         {stats === null && (

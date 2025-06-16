@@ -2,8 +2,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import EmptyState from "../components/EmptyState";
+import OverlayLoader from "../components/OverlayLoader";
 import PrimaryButton from "../components/PrimaryButton";
 import Success from "../components/Success";
 import TaskDetailModal from "../components/TaskDetailModal";
@@ -113,6 +114,9 @@ export default function BraindumpScreen() {
 
 	return (
 		<View style={styles.container}>
+			{/* Loader Overlay */}
+      		<OverlayLoader visible={loading} />
+
 			{/* Background gradient */}
 			<LinearGradient
 				colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
@@ -124,7 +128,7 @@ export default function BraindumpScreen() {
 
 			<Text style={[theme.fonts.h1, { marginBottom: 8 }]}>Brain Dump</Text>
 			<Text style={[theme.fonts.h3, { marginBottom: 24 }]}>Your todo list</Text>
-			{loading && <ActivityIndicator size="large" color={theme.colors.primaryPurple} />}
+	
 			{error && <Text style={{ color: "red" }}>{error}</Text>}
 
 			{/* Empty state */}

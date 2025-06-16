@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import { FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import EmptyState from '../components/EmptyState';
+import OverlayLoader from '../components/OverlayLoader';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
 import SessionCard from '../components/SessionCard';
@@ -19,6 +20,7 @@ export default function AccountScreen() {
 
   const [tab, setTab] = useState(0);
   const [sessionData, setSessionData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const API_URL = "https://fynk-backend.onrender.com/sessions";
 
@@ -26,6 +28,8 @@ export default function AccountScreen() {
 
   // Fetch sessions
   const fetchSessions = async () => {
+    setLoading(true);
+
     try {
       const token = await AsyncStorage.getItem("authToken");
 
@@ -49,6 +53,8 @@ export default function AccountScreen() {
       }
     } catch (error) {
       console.error("Kan sessies niet ophalen:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,6 +83,9 @@ export default function AccountScreen() {
 
   return (
     <View style={styles.container}>
+        {/* Loader Overlay */}
+        <OverlayLoader visible={loading} />
+
         {/* Background gradient */}
         <LinearGradient
           colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
