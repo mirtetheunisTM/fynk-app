@@ -41,7 +41,7 @@ export default function NotificationScreen() {
               {/* Requests section */}
               <View style={styles.section}>
                   <Text style={[theme.fonts.h3, { marginBottom: 16 }]}>StudyBuddy request</Text>
-                  <BuddyRequest user={user} />
+                  <BuddyRequest user={user} requestId={1}/>
               </View>
             </ScrollView>
         </View>

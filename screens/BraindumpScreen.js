@@ -173,7 +173,7 @@ export default function BraindumpScreen() {
 				visible={showWarning}
 				onCancel={() => setShowWarning(false)}
 				onConfirm={confirmDelete}
-				message="Weet je zeker dat je deze taak wilt verwijderen?"
+				message="Are you sure you want to delete this task?"
 			/>
 			{showSuccess && (
 				<Success

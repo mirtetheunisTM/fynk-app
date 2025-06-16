@@ -15,10 +15,10 @@ export default function AllFriendsScreen() {
     const [filteredFriends, setFilteredFriends] = useState([]); // Initialize with an empty array
 
     const friends = [
-      { profileImage: require("../assets/images/Robbe.jpg"), friendName: "Robbe", level: "Goldfish", streak: "3", progress: 0.6, active: true },
-      { profileImage: require("../assets/images/Ella.jpg"), friendName: "Ella", level: "Einstein", streak: "15", progress: 0.3, active: true },
-      { profileImage: require("../assets/images/Laura.jpg"), friendName: "Laura", level: "Monkey Brain", streak: "6", progress: 0.9, active: false },
-      { profileImage: require("../assets/images/Sam.jpg"), friendName: "Sam", level: "Baby Brain", streak: "2", progress: 0.5, active: false },
+      { profileImage: require("../assets/images/Robbe.jpg"), name: "Robbe", level: "Goldfish", streak: "3", progress: 0.6, active: true },
+      { profileImage: require("../assets/images/Ella.jpg"), name: "Ella", level: "Einstein", streak: "15", progress: 0.3, active: true },
+      { profileImage: require("../assets/images/Laura.jpg"), name: "Laura", level: "Monkey Brain", streak: "6", progress: 0.9, active: false },
+      { profileImage: require("../assets/images/Sam.jpg"), name: "Sam", level: "Baby Brain", streak: "2", progress: 0.5, active: false },
     ];
 
     const searchFriends = async (query) => {
@@ -90,7 +90,7 @@ export default function AllFriendsScreen() {
                         <FriendCard 
                           key={index} 
                           profileImage={friend.profileImage || require("../assets/images/Ella.jpg")}
-                          friendName={friend.name || "Ella"}
+                          friendName={friend.friendName || "Ella"}
                           level={friend.level || "Einstein"}
                           streak={friend.streak || "0"}
                           progress={friend.progress || 0}
@@ -106,7 +106,7 @@ export default function AllFriendsScreen() {
                         <FriendCard 
                           key={index} 
                           profileImage={friend.profileImage || require("../assets/images/Robbe.jpg")}
-                          friendName={friend.friendName || "Unknown"}
+                          friendName={friend.name || "Unknown"}
                           level={friend.level || "Einstein"}
                           streak={friend.streak || "0"}
                           progress={friend.progress || 0}
@@ -138,11 +138,7 @@ export default function AllFriendsScreen() {
               <FriendProfileModal 
                 visible={modalVisible} 
                 onClose={() => setModalVisible(false)} 
-                user={{
-                  profileImage: require("../assets/images/Ella.jpg"),
-                  friendName: selectedFriend.friendName || "Ella",
-                  level: "Einstein",
-                }}
+                user={selectedFriend}
                 friendshipStatus="none"
               />
             )}

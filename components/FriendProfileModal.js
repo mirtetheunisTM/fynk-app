@@ -11,6 +11,8 @@ export default function FriendProfileModal({ visible, onClose, user, friendshipS
   if (!user) return null;
   const [friendStatus, setFriendStatus] = useState(friendshipStatus);
 
+  console.log
+
   // Button config based on friendship status
   const getButtonProps = () => {
     switch (friendStatus) {
@@ -35,7 +37,17 @@ export default function FriendProfileModal({ visible, onClose, user, friendshipS
   const { title, style: buttonStyle } = getButtonProps();
 
   const onSendRequest = () => {
-    setFriendStatus('pending');
+    switch (friendStatus) {
+      case 'pending':
+        // Nothing should happen when request is already pending
+        break;
+      case 'none':
+        // sendFriendRequest(); & setFriendStatus('pending');
+        break;
+      case 'friends':
+        // Open Warning Modal and ask if they are sure they want to delete this friend, if yes: deleteFriend && setFriendStatus('none');
+        break;
+    }
   };
 
 
@@ -52,7 +64,7 @@ export default function FriendProfileModal({ visible, onClose, user, friendshipS
           <Image source={user.profileImage} style={styles.avatar} />
 
           {/* Name */}
-          <Text style={[theme.fonts.h3, { marginTop: 8 }]}>{user.friendName}</Text>
+          <Text style={[theme.fonts.h3, { marginTop: 8 }]}>{user.name}</Text>
 
           {/* Followers */}
           <Text style={theme.fonts.caption}>

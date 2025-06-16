@@ -1,18 +1,86 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import theme from '../theme';
 import PrimaryButton from './PrimaryButton';
 import ProgressBar from './ProgressBar';
+import WarningPopup from "./WarningPopup";
 
-export default function BuddyRequest({user}) {
-    const onClose = () => {
-      console.log('Close button pressed'); // With backend: deny friend request
+export default function BuddyRequest({user, requestId}) {
+    const [warningVisible, setWarningVisible] = useState(false);
+
+    const acceptRequest = async (requestId) => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+
+        if (!token) {
+          console.error("Geen token gevonden. Log in opnieuw.");
+          return;
+        }
+
+        const response = await fetch(`https://fynk-backend.onrender.com/friends/request/${requestId}/accept`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          console.log(`Vriendschapsverzoek ${requestId} geaccepteerd.`);
+        } else {
+          console.error(`Fout bij accepteren van verzoek ${requestId}:`, await response.text());
+        }
+      } catch (error) {
+        console.error("Kan vriendverzoek niet accepteren:", error);
+      }
+    };
+
+    const rejectRequest = async (requestId) => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+
+        if (!token) {
+          console.error("Geen token gevonden. Log in opnieuw.");
+          return;
+        }
+
+        const response = await fetch(`https://fynk-backend.onrender.com/friends/request/${requestId}/reject`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          console.log(`Vriendschapsverzoek ${requestId} afgewezen.`);
+        } else {
+          console.error(`Fout bij afwijzen van verzoek ${requestId}:`, await response.text());
+        }
+      } catch (error) {
+        console.error("Kan vriendverzoek niet afwijzen:", error);
+      }
+    };
+
+    const handleAccept = () => {
+    acceptRequest(requestId);
+    };
+
+    const handleReject = () => {
+      setWarningVisible(true);
+    };
+
+    const confirmReject = () => {
+      rejectRequest(requestId);
+      setWarningVisible(false);
     };
 
     return (
         <View style={styles.container}>
           {/* Close button */}
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          <TouchableOpacity style={styles.closeButton} onPress={handleReject}>
             <Feather name="x" size={24} color="#999" />
           </TouchableOpacity>
 
@@ -41,7 +109,15 @@ export default function BuddyRequest({user}) {
           </View>
 
           {/* Primary Button */}
-          <PrimaryButton title="Accept request" onPress={() => {}} />
+          <PrimaryButton title="Accept request" onPress={() => {handleAccept()}} />
+
+          {/* WarningPopup at reject */}
+          <WarningPopup
+            visible={warningVisible}
+            onCancel={() => setWarningVisible(false)}
+            onConfirm={confirmReject}
+            message="Are you sure you want to reject this request?"
+          />
         </View>
     )
 }
