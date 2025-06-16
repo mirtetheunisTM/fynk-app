@@ -24,6 +24,9 @@ export default function AccountScreen() {
   const [sessionData, setSessionData] = useState([]);
   const [level, setLevel] = useState(0);
   const [levelName, setLevelName] = useState("");
+  const [xp, setXp] = useState(0);
+  const [nextLevelThreshold, setNextLevelThreshold] = useState(0);
+  const [streak, setStreak] = useState(0);
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("Alexia");
   const [selectedSession, setSelectedSession] = useState(null);
@@ -103,10 +106,31 @@ useEffect(() => {
         setLevel(levelData.data.currentLevel || 0);
         setLevelName(levelData.data.levelName || "Goldfish");
       } else {
-        console.error("Fout bij ophalen van level:", levelData.message);
+        console.error("Error while loading level:", levelData.message);
       }
+
+      // Haal huidige XP op
+      const xpResponse = await fetch("https://fynk-backend.onrender.com/stats/xp", {
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      const xpData = await xpResponse.json();
+      if (xpResponse.ok) setXp(xpData.data);
+
+      // Haal drempel voor het volgende level op
+      const nextLevelResponse = await fetch("https://fynk-backend.onrender.com/stats/nextLevel", {
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      const nextLevelData = await nextLevelResponse.json();
+      if (nextLevelResponse.ok) setNextLevelThreshold(nextLevelData.data);
+
+      // Haal huidige streak op
+      const streakResponse = await fetch("https://fynk-backend.onrender.com/stats/streak", {
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      const streakData = await streakResponse.json();
+      if (streakResponse.ok) setStreak(streakData.data);
     } catch (error) {
-      console.error("Kan sessies niet ophalen:", error);
+      console.error("Error while loading data:", error);
     } finally {
       setLoading(false);
     }
@@ -115,6 +139,9 @@ useEffect(() => {
   useEffect(() => {
     fetchSessions();
   }, []);
+
+  const progress = xp / (xp + nextLevelThreshold);
+
 
   // Get image and description
   const getSessionDetails = (focus_mode_id) => {
@@ -185,9 +212,9 @@ useEffect(() => {
         {/* Progress */}
         <View style={styles.progressRow}>
           <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{levelName}</Text>
-          <ProgressBar progress={0.6} style={{width: '70%'}} />
-          <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>{level + 1}</Text>
-          <Ionicons name="flame" size={16} color={theme.colors.primaryPurple} style={{ marginLeft: -8 }} />
+          <ProgressBar progress={progress} style={{width: '70%'}} />
+          <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>{streak}</Text>
+          <Ionicons name="flame" size={16} color={theme.colors.primaryPurple} style={{ marginLeft: -10 }} />
         </View>
 
         {/* Tabs */}
