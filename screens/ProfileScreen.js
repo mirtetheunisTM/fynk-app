@@ -59,7 +59,7 @@ export default function AccountScreen() {
       });
       const levelData = await levelResponse.json();
       console.log("Level data: ", levelData);
-      if (levelResponse.ok) setLevel(levelData.data);
+      if (levelResponse.ok) setLevel(levelData.data.currentLevel || 0);
     } catch (error) {
       console.error("Kan sessies niet ophalen:", error);
     } finally {
