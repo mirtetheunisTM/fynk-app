@@ -40,8 +40,8 @@ export default function RegisterScreen() {
       console.log("Token uit backend:", data.data?.token); // <-- voeg deze regel toe
 
       if (response.ok && data.data?.token) {
-        await AsyncStorage.setItem("authToken", data.data.token); // <-- juiste pad!
-        navigation.replace("MainTabs"); // of "Onboarding"
+        await AsyncStorage.setItem("authToken", data.data.token);
+        navigation.replace("Onboarding"); // <-- Ga eerst naar onboarding!
       } else {
         setErrorMessage(data.message || "Registratie mislukt.");
       }

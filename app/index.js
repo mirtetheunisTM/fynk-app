@@ -6,6 +6,7 @@ import AddTaskScreen from '../screens/AddTaskScreen';
 import HomeScreen from '../screens/HomeScreen';
 import IntroScreen from '../screens/IntroScreen';
 import LoginScreen from '../screens/LoginScreen';
+import OnboardingScreen from '../screens/OnboardingScreen';
 import PlaygroundScreen from '../screens/Playground';
 import ProductDetailScreen from '../screens/ProductDetailScreen';
 import RegisterScreen from '../screens/RegisterScreen';
@@ -36,6 +37,7 @@ export default function App() {
         <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false }} />
         <Stack.Screen name="AddTask" component={AddTaskScreen} options={{ headerShown: false }} />
         <Stack.Screen name="SessionCompleted" component={SessionCompletedScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
   );
 }
