@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
 import BalanceCard from "../components/BalanceCard";
 import BoosterCard from "../components/BoosterCard";
 import ProductCard from "../components/ProductCard";
@@ -15,13 +15,54 @@ const SHOP_PRODUCTS = [
     description: "Protects streak for 1 skipped day",
     price: 1,
   },
-  // ...meer producten
+  {
+    id: "2",
+    image: require("../assets/images/mascottes/double-xp.png"),
+    title: "Double XP Session",
+    description: "Next session earns 2× XP",
+    price: 1,
+  },
+  {
+    id: "3",
+    image: require("../assets/images/mascottes/weekend-warrior.png"),
+    title: "Weekend Warrior",
+    description: "+50% XP for a Saturday or Sunday session",
+    price: 1,
+  },
+  {
+    id: "4",
+    image: require("../assets/images/mascottes/comeback-mode.png"),
+    title: "Comeback Mode",
+    description: "If user skipped yesterday, completing 2 sessions today restores streak",
+    price: 1,
+  },
 ];
+
 const PURCHASED = [
-  // Vul aan met gekochte boosters
+  {
+    id: "1",
+    image: require("../assets/images/mascottes/streak-freeze.png"),
+    title: "Streak freeze",
+    description: "Protects streak for 1 skipped day",
+    price: 1,
+  },
+  {
+    id: "3",
+    image: require("../assets/images/mascottes/weekend-warrior.png"),
+    title: "Weekend Warrior",
+    description: "+50% XP for a Saturday or Sunday session",
+    price: 1,
+  },
 ];
+
 const USED = [
-  // Vul aan met gebruikte boosters
+  {
+    id: "1",
+    image: require("../assets/images/mascottes/streak-freeze.png"),
+    title: "Streak freeze",
+    description: "Protects streak for 1 skipped day",
+    price: 1,
+  },
 ];
 
 export default function ShopScreen() {
@@ -36,7 +77,7 @@ export default function ShopScreen() {
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={styles.gradientBackground}
-      /> 
+      />
 
       <Text style={[theme.fonts.h1, { marginBottom: 16 }]}>Booster Shop</Text>
       <BalanceCard balance={3} />
@@ -47,38 +88,58 @@ export default function ShopScreen() {
       />
       {tab === 0 ? (
         <FlatList
-          key="shop"
           data={SHOP_PRODUCTS}
           renderItem={({ item }) => <ProductCard {...item} />}
           keyExtractor={item => item.id}
           numColumns={2}
-          columnWrapperStyle={{ justifyContent: "space-between" }}
+          columnWrapperStyle={styles.columnWrapper}
+          contentContainerStyle={styles.productsList}
+          showsVerticalScrollIndicator={false}
         />
       ) : (
-        <View>
+        <ScrollView
+          contentContainerStyle={styles.productsList}
+          showsVerticalScrollIndicator={false}
+        >
           <Text style={[theme.fonts.h3, { marginBottom: 8 }]}>Purchased</Text>
           <FlatList
-            key="purchased"
             data={PURCHASED}
             numColumns={2}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
-              <BoosterCard {...item} onActivate={() => {}} />
+              <View style={styles.cardWrapper}>
+                <BoosterCard {...item} onActivate={() => {}} />
+              </View>
             )}
-            columnWrapperStyle={{ justifyContent: "space-between" }}
+            columnWrapperStyle={styles.columnWrapper}
+            scrollEnabled={false}
+            contentContainerStyle={{ paddingBottom: 8 }}
+            ListEmptyComponent={
+              <Text style={[theme.fonts.body, { color: "#888", textAlign: "center", marginVertical: 24 }]}>
+                You have no boosters yet.
+              </Text>
+            }
           />
           <Text style={[theme.fonts.h3, { marginVertical: 8 }]}>Used</Text>
           <FlatList
-            key="used"
             data={USED}
             numColumns={2}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
-              <BoosterCard {...item} />
+              <View style={styles.cardWrapper}>
+                <BoosterCard {...item} />
+              </View>
             )}
-            columnWrapperStyle={{ justifyContent: "space-between" }}
+            columnWrapperStyle={styles.columnWrapper}
+            scrollEnabled={false}
+            contentContainerStyle={{ paddingBottom: 32 }}
+            ListEmptyComponent={
+              <Text style={[theme.fonts.body, { color: "#888", textAlign: "center", marginVertical: 24 }]}>
+                No used boosters yet.
+              </Text>
+            }
           />
-        </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -92,10 +153,24 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral,
+    backgroundColor: "#F8F9FF",
     position: 'relative',
     paddingHorizontal: 16,
     paddingTop: 60,
-
+  },
+  columnWrapper: {
+    justifyContent: "space-between",
+    gap: 12,
+    marginBottom: 16,
+  },
+  productsList: {
+    paddingBottom: 32,
+    paddingTop: 8,
+  },
+  cardWrapper: {
+    flex: 1,
+    maxWidth: "48%",
+    marginRight: 8,
+    marginBottom: 16,
   },
 });
