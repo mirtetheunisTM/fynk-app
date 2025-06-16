@@ -8,6 +8,7 @@ import OverlayLoader from '../components/OverlayLoader';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
 import SecondaryButton from '../components/SecondaryButton';
+import SessionDetailModal from "../components/SessionDetailModal";
 import theme from '../theme';
 
 const TASKS_API_URL = "https://fynk-backend.onrender.com/tasks/status/todo";
@@ -20,6 +21,7 @@ export default function HomeScreen() {
   const [lastSession, setLastSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const [level, setLevel] = useState(null);
   const [xp, setXp] = useState(null);
@@ -246,19 +248,21 @@ export default function HomeScreen() {
 
       {/* Last session */}
       {lastSession && (
-        <View style={styles.card}>
-          <Text style={[theme.fonts.h3, { marginBottom: 8 }]}>Last session</Text>
-          <View style={styles.sessionRow}>
-            <Image source={getFocusModeImage(lastSession.focus_mode_id)} style={styles.sessionImage} />
-            <View style={styles.sessionColumn}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>{getFocusMode(lastSession.focus_mode_id)}</Text>
-                <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{lastSession.date}</Text>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <View style={styles.card}>
+            <Text style={[theme.fonts.h3, { marginBottom: 8 }]}>Last session</Text>
+            <View style={styles.sessionRow}>
+              <Image source={getFocusModeImage(lastSession.focus_mode_id)} style={styles.sessionImage} />
+              <View style={styles.sessionColumn}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>{getFocusMode(lastSession.focus_mode_id)}</Text>
+                  <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{lastSession.date}</Text>
+                </View>
+                <Text style={theme.fonts.caption}>{lastSession.duration ? lastSession.duration + ' minutes' : 'No duration known'}</Text>
               </View>
-              <Text style={theme.fonts.caption}>{lastSession.duration ? lastSession.duration + ' minutes' : 'No duration known'}</Text>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       )}
 
       {/* Buttons */}
@@ -267,6 +271,11 @@ export default function HomeScreen() {
         <PrimaryButton title="Start Session" style={{ flex: 1 }} onPress={() => navigation.navigate('ChooseTasks')} />
       </View>
 
+      <SessionDetailModal
+  visible={modalVisible}
+  onClose={() => setModalVisible(false)}
+  session={lastSession}
+/>
     </View>
   );
 }

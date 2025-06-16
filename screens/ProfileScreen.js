@@ -5,12 +5,13 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
-import { FlatList, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import EmptyState from '../components/EmptyState';
 import OverlayLoader from '../components/OverlayLoader';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
 import SessionCard from '../components/SessionCard';
+import SessionDetailModal from '../components/SessionDetailModal';
 import ShopTabs from '../components/ShopTabs';
 import StatisticsTab from '../components/StatisticsTab';
 import theme from '../theme';
@@ -24,6 +25,8 @@ export default function AccountScreen() {
   const [levelName, setLevelName] = useState("");
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("Alexia");
+  const [selectedSession, setSelectedSession] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const API_URL = "https://fynk-backend.onrender.com/sessions";
 
@@ -211,19 +214,25 @@ useEffect(() => {
               <FlatList
                 data={sessionData}
                 keyExtractor={(item, index) => index.toString()}
-                contentContainerStyle={{ paddingBottom: 16 }}
                 renderItem={({ item }) => (
-                  <View style={styles.sessionBlock}>
-                    <SessionCard
-                      profileImage={getSessionDetails(item.focus_mode_id).image}
-                      friendName="You"
-                      sessionDescription={getSessionDetails(item.focus_mode_id).description}
-                      timeAgo={getTimeAgo(item)}
-                    />
-                    <Text style={[theme.fonts.caption, { marginLeft: 48 }]}>
-                      Cheered by <Text style={styles.boldText}>Ella</Text> and <Text style={styles.boldText}>15 others</Text>
-                    </Text>
-                  </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedSession(item);
+                      setModalVisible(true);
+                    }}
+                  >
+                    <View style={styles.sessionBlock}>
+                      <SessionCard
+                        profileImage={getSessionDetails(item.focus_mode_id).image}
+                        friendName="You"
+                        sessionDescription={getSessionDetails(item.focus_mode_id).description}
+                        timeAgo={getTimeAgo(item)}
+                      />
+                      <Text style={[theme.fonts.caption, { marginLeft: 48 }]}>
+                        Cheered by <Text style={styles.boldText}>Ella</Text> and <Text style={styles.boldText}>15 others</Text>
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
               )}
             />}
           </>
@@ -232,6 +241,13 @@ useEffect(() => {
         ) : (
           <Text style={[theme.fonts.caption, { textAlign: 'center' }]}>No content available</Text>
         )}
+
+        {/* Session Detail Modal */}
+        <SessionDetailModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          session={selectedSession}
+        />
     </View>
   );
 }
@@ -293,5 +309,34 @@ const styles = StyleSheet.create({
   },
   boldText: {
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: theme.colors.neutral,
+    borderRadius: 8,
+    padding: 24,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    ...theme.fonts.h2,
+    marginBottom: 8,
+    color: theme.colors.primaryPurple,
+  },
+  modalDescription: {
+    ...theme.fonts.body,
+    textAlign: 'center',
+    marginBottom: 16,
+    color: theme.colors.text,
+  },
+  modalTime: {
+    ...theme.fonts.caption,
+    marginBottom: 16,
+    color: theme.colors.textSecondary,
   },
 });
