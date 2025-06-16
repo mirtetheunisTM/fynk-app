@@ -97,7 +97,7 @@ export default function HomeScreen() {
                 });
                 const levelData = await levelResponse.json();
                 console.log("Level data: ", levelData);
-                if (levelResponse.ok) setLevel(levelData.data);
+                if (levelResponse.ok) setLevel(levelData.data.levelName);
 
                 // Haal huidige XP op
                 const xpResponse = await fetch("https://fynk-backend.onrender.com/stats/xp", {
@@ -164,8 +164,9 @@ export default function HomeScreen() {
         }
     };
 
-      const userName = user ? user.name : "Alexia";
-      const progress = 0.75;
+      const userName = user ? user.name.split(" ")[0] : "Alexia";
+      const progress = xp / (xp + nextLevelThreshold);
+      console.log("Progress: ", progress);
 
     const getFocusModeImage = (focus_mode_id) => {
         focus_mode_id = Number(focus_mode_id);
@@ -206,7 +207,7 @@ export default function HomeScreen() {
         <View style={styles.headerText}>
           <Text style={theme.fonts.h2}>Hi {userName}, ready to focus?</Text>
           <View style={styles.levelRow}>
-            <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>Level 2</Text>
+            <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{level}</Text>
             <View style={styles.progressWrapper}>
               <ProgressBar progress={progress} />
             </View>
