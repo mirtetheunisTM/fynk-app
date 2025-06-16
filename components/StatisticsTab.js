@@ -81,7 +81,8 @@ export default function StatisticsTab() {
                     <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>Longest Streak</Text>
                     </View>
                     <View style={styles.tag}>
-                    <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{stats.longestStreak} Days</Text>
+                      {/* Tijdelijk hardcoded voor demo want user heeft nog geen streaks */}
+                    <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>7 Days</Text>
                     </View>
                 </View>
                 <Image source={require('../assets/images/mascottes/handsup.png')} style={styles.brainImage} />
@@ -134,8 +135,11 @@ export default function StatisticsTab() {
                 </View>
                 </View>
                 <View style={styles.row}>
-                <StatCard title="Cheers Given" tag={`${stats.cheersGiven}`} icon="heart" tagColor={theme.colors.neutral}/>
-                <StatCard title="Cheers Received" tag={`${stats.cheersReceived}`} icon="heart" tagColor={theme.colors.neutral}/>
+                  {/* cheers tijdelijk hardcoded voor MVP */}
+                {/* <StatCard title="Cheers Given" tag={`${stats.cheersGiven}`} icon="heart" tagColor={theme.colors.neutral}/>
+                <StatCard title="Cheers Received" tag={`${stats.cheersReceived}`} icon="heart" tagColor={theme.colors.neutral}/> */}
+                <StatCard title="Cheers Given" tag={41} icon="heart" tagColor={theme.colors.neutral}/>
+                <StatCard title="Cheers Received" tag={52} icon="heart" tagColor={theme.colors.neutral}/>
                 </View>
             </ScrollView>
             )}
