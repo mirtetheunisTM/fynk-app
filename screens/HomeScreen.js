@@ -165,7 +165,7 @@ export default function HomeScreen() {
     };
 
       const userName = user ? user.name.split(" ")[0] : "Alexia";
-      const progress = xp / (xp + nextLevelThreshold);
+      const progress = xp && nextLevelThreshold ? xp / (xp + nextLevelThreshold) : 0; // Ensure progress is a number
       console.log("Progress: ", progress);
 
     const getFocusModeImage = (focus_mode_id) => {
