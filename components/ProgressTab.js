@@ -1,100 +1,125 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
 import theme from '../theme';
 import ProgressBar from './ProgressBar';
+import ProgressCard from './ProgressCard';
 
 const ProgressTab = () => {
-    
+  const [currentLevel, setCurrentLevel] = useState(null);
+  const [nextLevel, setNextLevel] = useState(null);
+  const [currentStreak, setCurrentStreak] = useState(null);
+
+  useEffect(() => {
+    const fetchProgressData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('authToken');
+
+        if (!token) {
+          console.error('No token found. Please log in again.');
+          return;
+        }
+
+        // Fetch current level data
+        const levelResponse = await fetch('https://fynk-backend.onrender.com/stats/level', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const levelData = await levelResponse.json();
+        if (levelResponse.ok) {
+          setCurrentLevel(levelData.data);
+        } else {
+          console.error('Failed to fetch current level:', levelData.message);
+        }
+
+        // Fetch next level data
+        const nextLevelResponse = await fetch('https://fynk-backend.onrender.com/stats/nextlevelname', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const nextLevelData = await nextLevelResponse.json();
+        if (nextLevelResponse.ok) {
+          setNextLevel({
+            levelName: nextLevelData.data.levelName,
+            requiredXP: nextLevelData.data.xpRequired,
+            description: "Achieve mastery and unlock your full potential." // Hardcoded description
+          });
+        } else {
+          console.error('Failed to fetch next level:', nextLevelData.message);
+        }
+
+        // Hardcode description for current level
+        setCurrentLevel(prev => ({
+          ...prev,
+          description: "A level of focus and determination." // Hardcoded description
+        }));
+
+        // Fetch current streak data
+        const streakResponse = await fetch('https://fynk-backend.onrender.com/stats/streak', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const streakData = await streakResponse.json();
+        if (streakResponse.ok) {
+          setCurrentStreak({
+            currentStreak: streakData.data,
+            daysUntilBest: 5 // Hardcoded value for days until best
+          });
+        } else {
+          console.error('Failed to fetch current streak:', streakData.message);
+        }
+      } catch (error) {
+        console.error('Error fetching progress data:', error);
+      }
+    };
+
+    fetchProgressData();
+  }, []);
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+
+        {/* Current Streak Section */}
+      {currentStreak && (
+        <ProgressCard
+          title="Current streak"
+          image={require('../assets/images/mascottes/streak.png')}
+          heading={`Current streak is ${currentStreak.currentStreak}!`}
+          description={`${currentStreak.daysUntilBest} more days till you break your personal best`}
+        />
+      )}
+
       {/* Current Level Section */}
-      <View style={styles.sectionContainer}>
-        <Text style={theme.fonts.h3}>Current level</Text>
-        <View style={styles.levelCard}>
-          <Image
-            source={require('../assets/images/mascottes/monkmode.png')}
-            style={styles.levelImage}
-          />
-          <View style={styles.levelDetails}>
-            <Text style={theme.fonts.h3}>Monkey Brain</Text>
-            <Text style={theme.fonts.caption}>Brain jumping from thought to thought like vines.</Text>
-          </View>
-        </View>
-        <ProgressBar progress={0.75} style={{ width: '90%' }} />
-        <Text style={theme.fonts.caption}>Keep going to reach the next level!</Text>
-      </View>
+      {currentLevel && (
+        <ProgressCard
+          title="Current level"
+          image={require('../assets/images/mascottes/lockedin.png')}
+          heading={currentLevel.levelName}
+          description={currentLevel.description}
+          footer={<ProgressBar progress={currentLevel.progress} style={{ width: '90%' }} />}
+          footerText="Keep going to reach the next level!"
+        />
+      )}
 
       {/* Next Level Section */}
-      <View style={styles.sectionContainer}>
-        <Text style={theme.fonts.h3}>Next level</Text>
-        <View style={styles.levelCard}>
-          <Image
-            source={require('../assets/images/mascottes/babybrain.svg')}
-            style={styles.levelImage}
-          />
-          <View style={styles.levelDetails}>
-            <Text style={theme.fonts.h3}>Baby Brain</Text>
-            <Text style={theme.fonts.caption}>Slightly evolved. Still very breakable.</Text>
-          </View>
-          <Text style={[theme.fonts.body, styles.unlockText]}>Unlocks at: 300 XP</Text>
-        </View>
-      </View>
-
-      {/* Current Streak Section */}
-      <View style={styles.sectionContainer}>
-        <Text style={theme.fonts.h3}>Current streak</Text>
-        <View style={styles.streakCard}>
-          <Image
-            source={require('../assets/images/mascottes/streak.svg')}
-            style={styles.streakImage}
-          />
-          <View style={styles.streakDetails}>
-            <Text style={theme.fonts.h3}>Current streak is 6!</Text>
-            <Text style={theme.fonts.caption}>8 more days till you break your personal best</Text>
-          </View>
-        </View>
-      </View>
-    </View>
+      {nextLevel && (
+        <ProgressCard
+          title="Next level"
+          image={require('../assets/images/mascottes/sigmalevel.png')}
+          heading={nextLevel.levelName}
+          description={nextLevel.description}
+          footerText={`Unlocks at: ${nextLevel.requiredXP} XP`}
+        />
+      )}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: theme.colors.neutral,
+    marginTop: -32, // Adjust spacing to reduce gap
   },
-  sectionContainer: {
-    marginBottom: 24,
-  },
-  levelCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 16,
-  },
-  levelImage: {
-    width: 50,
-    height: 50,
-    marginRight: 16,
-  },
-  levelDetails: {
-    flex: 1,
-  },
-  unlockText: {
-    fontWeight: 'bold',
-    color: theme.colors.primaryPurple,
-  },
-  streakCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 16,
-  },
-  streakImage: {
-    width: 50,
-    height: 50,
-    marginRight: 16,
-  },
-  streakDetails: {
-    flex: 1,
+  contentContainer: {
+    padding: 16,
   },
 });
 
