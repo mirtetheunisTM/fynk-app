@@ -21,6 +21,7 @@ export default function AccountScreen() {
   const [tab, setTab] = useState(0);
   const [sessionData, setSessionData] = useState([]);
   const [level, setLevel] = useState(0);
+  const [levelName, setLevelName] = useState("");
   const [loading, setLoading] = useState(true);
 
   const API_URL = "https://fynk-backend.onrender.com/sessions";
@@ -59,7 +60,12 @@ export default function AccountScreen() {
       });
       const levelData = await levelResponse.json();
       console.log("Level data: ", levelData);
-      if (levelResponse.ok) setLevel(levelData.data.currentLevel || 0);
+      if (levelResponse.ok) {
+        setLevel(levelData.data.currentLevel || 0);
+        setLevelName(levelData.data.levelName || "Goldfish");
+      } else {
+        console.error("Fout bij ophalen van level:", levelData.message);
+      }
     } catch (error) {
       console.error("Kan sessies niet ophalen:", error);
     } finally {
@@ -139,9 +145,9 @@ export default function AccountScreen() {
 
         {/* Progress */}
         <View style={styles.progressRow}>
-          <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>Goldfish</Text>
+          <Text style={[theme.fonts.caption, { fontWeight: 'bold' }]}>{levelName}</Text>
           <ProgressBar progress={0.6} style={{width: '70%'}} />
-          <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>6</Text>
+          <Text style={[theme.fonts.body, { fontWeight: 'bold' }]}>{level + 1}</Text>
           <Ionicons name="flame" size={16} color={theme.colors.primaryPurple} style={{ marginLeft: -8 }} />
         </View>
 
