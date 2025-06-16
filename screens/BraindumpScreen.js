@@ -14,9 +14,9 @@ import theme from "../theme";
 
 const CATEGORIES = [
 	{ id: "1", title: "Deadline Drama", color: theme.colors.pink, priority: "High" },
-	{ id: "2", title: "Future me problem", color: theme.colors.primaryPurple, priority: "Medium" },
-	{ id: "3", title: "Quick fix", color: theme.colors.lila, priority: "Medium" },
-	{ id: "4", title: "Nice, not necessary", color: theme.colors.creme, priority: "Low" },
+	{ id: "2", title: "Future Me Problem", color: theme.colors.primaryPurple, priority: "Medium" },
+	{ id: "3", title: "Quick Fix", color: theme.colors.lila, priority: "Medium" },
+	{ id: "4", title: "Nice, Not Necessary", color: theme.colors.creme, priority: "Low" },
 ];
 
 const API_URL = "https://fynk-backend.onrender.com/tasks/status/todo";
@@ -80,6 +80,10 @@ export default function BraindumpScreen() {
 	const getTasksForCategory = (categoryId) =>
 	  tasks.filter(task => String(task.category_id) === String(categoryId));
 
+	const getTasksForUrgencyType = (urgencyType) => {
+	    return tasks.filter(task => task.urgency_type === urgencyType);
+	};
+
 	const handleDelete = () => setShowWarning(true);
 	const confirmDelete = async () => {
 	  if (!selectedTask) return;
@@ -136,7 +140,7 @@ export default function BraindumpScreen() {
 				<EmptyState page="tasks" message="Nothing to see here. You haven’t created any tasks." />
 			)}
 
-			{/* Todo list with categories */}
+			{/* Todo list organized by urgency type */}
 			{!loading && !error && tasks.length > 0 && (
 				<FlatList
 					data={CATEGORIES}
@@ -146,7 +150,7 @@ export default function BraindumpScreen() {
 							title={category.title}
 							color={category.color}
 							priority={category.priority}
-							tasks={getTasksForCategory(category.id)}
+							tasks={getTasksForUrgencyType(category.title)}
 							onTaskPress={(task) => {
 								setSelectedTask(task);
 								setModalVisible(true);
@@ -171,7 +175,7 @@ export default function BraindumpScreen() {
 					// Zet categoryId (camelCase) voor de backend
 					const body = {
 						...updatedTask,
-						categoryId: String(updatedTask.category_id), // <-- forceer string
+						urgencyType: updatedTask.urgency_type,
 					};
 					await fetch(`https://fynk-backend.onrender.com/tasks/${updatedTask.task_id}`, {
 						method: "PUT",
