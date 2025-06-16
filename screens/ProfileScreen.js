@@ -20,6 +20,7 @@ export default function AccountScreen() {
 
   const [tab, setTab] = useState(0);
   const [sessionData, setSessionData] = useState([]);
+  const [level, setLevel] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const API_URL = "https://fynk-backend.onrender.com/sessions";
@@ -51,6 +52,14 @@ export default function AccountScreen() {
       } else {
         console.error("Fout bij ophalen van sessies:", data.message);
       }
+
+      // Haal huidige level op
+      const levelResponse = await fetch("https://fynk-backend.onrender.com/stats/level", {
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      const levelData = await levelResponse.json();
+      console.log("Level data: ", levelData);
+      if (levelResponse.ok) setLevel(levelData.data);
     } catch (error) {
       console.error("Kan sessies niet ophalen:", error);
     } finally {
@@ -111,11 +120,11 @@ export default function AccountScreen() {
             {/* Stats Section */}
             <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-                <Text style={[theme.fonts.body, styles.boldText]}>4</Text>
+                <Text style={[theme.fonts.body, styles.boldText]}>{sessionData.length}</Text>
                 <Text style={theme.fonts.caption}>Sessions</Text>
             </View>
             <View style={styles.statItem}>
-                <Text style={[theme.fonts.body, styles.boldText]}>2</Text>
+                <Text style={[theme.fonts.body, styles.boldText]}>{level}</Text>
                 <Text style={theme.fonts.caption}>Current level</Text>
             </View>
             <View style={styles.statItem}>

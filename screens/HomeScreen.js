@@ -16,9 +16,6 @@ const SESSION_API_URL = "https://fynk-backend.onrender.com/sessions/last";
 export default function HomeScreen() {
   const navigation = useNavigation();
 
-  const userName = 'Alexia';
-  const progress = 0.75;
-
   const [tasks, setTasks] = useState([]);
   const [lastSession, setLastSession] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,11 +24,13 @@ export default function HomeScreen() {
   const [level, setLevel] = useState(null);
   const [xp, setXp] = useState(null);
   const [nextLevelThreshold, setNextLevelThreshold] = useState(null);
+  const [user, setUser] = useState(null);
 
         const fetchData = async () => {
           setError('');
             try {
                 const token = await AsyncStorage.getItem("authToken");
+                const email = await AsyncStorage.getItem("email");
 
                 if (!token) {
                     setError("Geen token gevonden. Log in opnieuw.");
@@ -113,6 +112,14 @@ export default function HomeScreen() {
                 const nextLevelData = await nextLevelResponse.json();
                 console.log("Next level data: ", nextLevelData);
                 if (nextLevelResponse.ok) setNextLevelThreshold(nextLevelData.data);
+
+                // Haal usernaam op om te tonen
+                const userResponse = await fetch(`https://fynk-backend.onrender.com/auth/users/email/${email}`, {
+                  headers: { "Authorization": `Bearer ${token}` },
+                })
+                const userData = await userResponse.json();
+                console.log("User data: ", userData);
+                if (userResponse.ok) setUser(userData.data);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -154,6 +161,9 @@ export default function HomeScreen() {
             default: return "No Focus Mode";
         }
     };
+
+      const userName = user ? user.name : "Alexia";
+      const progress = 0.75;
 
     const getFocusModeImage = (focus_mode_id) => {
         focus_mode_id = Number(focus_mode_id);

@@ -41,6 +41,7 @@ export default function LoginScreen() {
 
             if (response.ok && data.token) {
                 await AsyncStorage.setItem("authToken", data.token);
+                await AsyncStorage.setItem("email", email);
                 navigation.replace("MainTabs");
             } else {
                 setErrorMessage("Invalid email or password.");
