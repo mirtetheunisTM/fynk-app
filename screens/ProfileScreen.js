@@ -23,10 +23,45 @@ export default function AccountScreen() {
   const [level, setLevel] = useState(0);
   const [levelName, setLevelName] = useState("");
   const [loading, setLoading] = useState(true);
+  const [username, setUsername] = useState("Alexia");
 
   const API_URL = "https://fynk-backend.onrender.com/sessions";
 
-  //
+  // fetch email from AsyncStorage
+  // find username from api call with email
+  const fetchUsername = async () => {
+  try {
+    const token = await AsyncStorage.getItem("authToken");
+    const email = await AsyncStorage.getItem("email");
+
+    if (!token) {
+      console.error("No token found. Please log in again.");
+      return;
+    }
+
+    const response = await fetch(`https://fynk-backend.onrender.com/auth/users/email/${email}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    console.log(data); // Debug the response structure
+
+    if (response.ok && data?.data?.name) {
+      setUsername(data.data.name); // Set the username
+    } else {
+      console.error("Failed to fetch username:", data.message);
+    }
+  } catch (error) {
+    console.error("Error fetching username:", error);
+  }
+};
+
+useEffect(() => {
+  fetchUsername();
+}, []);
+
 
   // Fetch sessions
   const fetchSessions = async () => {
@@ -141,7 +176,7 @@ export default function AccountScreen() {
         </View>
 
         {/* Username */}
-        <Text style={[theme.fonts.h3, styles.username]}>@alexiagonzalez</Text>
+        <Text style={[theme.fonts.h3, styles.username]}>{username}</Text>
 
         {/* Progress */}
         <View style={styles.progressRow}>
