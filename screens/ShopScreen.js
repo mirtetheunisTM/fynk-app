@@ -15,14 +15,31 @@ const SHOP_PRODUCTS = [
     description: "Protects streak for 1 skipped day",
     price: 1,
   },
-  // ...meer producten
+  {
+    id: "2",
+    image: require("../assets/images/mascottes/double-xp.png"),
+    title: "Double XP Session",
+    description: "Next session earns 2× XP",
+    price: 1,
+  },
+  {
+    id: "3",
+    image: require("../assets/images/mascottes/weekend-warrior.png"),
+    title: "Weekend Warrior",
+    description: "+50% XP for a Saturday or Sunday session",
+    price: 1,
+  },
+  {
+    id: "4",
+    image: require("../assets/images/mascottes/comeback-mode.png"),
+    title: "Comeback Mode",
+    description: "If user skipped yesterday, completing 2 sessions today restores streak",
+    price: 1,
+  },
 ];
-const PURCHASED = [
-  // Vul aan met gekochte boosters
-];
-const USED = [
-  // Vul aan met gebruikte boosters
-];
+
+const PURCHASED = [];
+const USED = [];
 
 export default function ShopScreen() {
   const [tab, setTab] = useState(0);
@@ -36,7 +53,7 @@ export default function ShopScreen() {
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={styles.gradientBackground}
-      /> 
+      />
 
       <Text style={[theme.fonts.h1, { marginBottom: 16 }]}>Booster Shop</Text>
       <BalanceCard balance={3} />
@@ -47,36 +64,37 @@ export default function ShopScreen() {
       />
       {tab === 0 ? (
         <FlatList
-          key="shop"
           data={SHOP_PRODUCTS}
           renderItem={({ item }) => <ProductCard {...item} />}
           keyExtractor={item => item.id}
           numColumns={2}
-          columnWrapperStyle={{ justifyContent: "space-between" }}
+          columnWrapperStyle={styles.columnWrapper}
+          contentContainerStyle={styles.productsList}
+          showsVerticalScrollIndicator={false}
         />
       ) : (
         <View>
           <Text style={[theme.fonts.h3, { marginBottom: 8 }]}>Purchased</Text>
           <FlatList
-            key="purchased"
             data={PURCHASED}
             numColumns={2}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
               <BoosterCard {...item} onActivate={() => {}} />
             )}
-            columnWrapperStyle={{ justifyContent: "space-between" }}
+            columnWrapperStyle={styles.columnWrapper}
+            contentContainerStyle={styles.productsList}
           />
           <Text style={[theme.fonts.h3, { marginVertical: 8 }]}>Used</Text>
           <FlatList
-            key="used"
             data={USED}
             numColumns={2}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
               <BoosterCard {...item} />
             )}
-            columnWrapperStyle={{ justifyContent: "space-between" }}
+            columnWrapperStyle={styles.columnWrapper}
+            contentContainerStyle={styles.productsList}
           />
         </View>
       )}
@@ -92,10 +110,17 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral,
+    backgroundColor: "#F8F9FF",
     position: 'relative',
     paddingHorizontal: 16,
     paddingTop: 60,
-
+  },
+  columnWrapper: {
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  productsList: {
+    paddingBottom: 32,
+    paddingTop: 8,
   },
 });

@@ -29,9 +29,9 @@ export default function ProductDetailScreen({ route, navigation }) {
       <View style={styles.row}>
         <Text style={[theme.fonts.h1, styles.title]}>{product.title}</Text>
         <View style={styles.priceWrapper}>
-        <Text style={[theme.fonts.h3, styles.price]}>{product.price}</Text>
-        <Image source={require("../assets/icons/CoinIcon.png")} style={styles.coin} />
-          </View>
+          <Text style={[theme.fonts.h3, styles.price]}>{product.price}</Text>
+          <Image source={require("../assets/icons/CoinIcon.png")} style={styles.coin} />
+        </View>
       </View>
       <Text style={[theme.fonts.body, styles.desc]}>{product.description}</Text>
        
@@ -53,7 +53,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral,
     position: 'relative',
     alignItems: "center",
     margin: 16,
@@ -65,7 +64,7 @@ const styles = StyleSheet.create({
   },
   img: {
     width: "100%",
-    height: "400",
+    height: 400, // <-- fix: getal, geen string
     borderRadius: 32,
     marginBottom: 24,
     resizeMode: "contain",
