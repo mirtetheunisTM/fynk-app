@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useCallback, useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import EmptyState from '../components/EmptyState';
+import OverlayLoader from '../components/OverlayLoader';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
 import SecondaryButton from '../components/SecondaryButton';
@@ -22,6 +23,11 @@ export default function HomeScreen() {
   const [lastSession, setLastSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [level, setLevel] = useState(null);
+  const [xp, setXp] = useState(null);
+  const [nextLevelThreshold, setNextLevelThreshold] = useState(null);
+
         const fetchData = async () => {
           setError('');
             try {
@@ -83,6 +89,30 @@ export default function HomeScreen() {
                 } else {
                     setError("Fout bij het ophalen van de laatste sessie.");
                 }
+
+                // Haal huidige level op
+                const levelResponse = await fetch("https://fynk-backend.onrender.com/stats/level", {
+                  headers: { "Authorization": `Bearer ${token}` },
+                });
+                const levelData = await levelResponse.json();
+                console.log("Level data: ", levelData);
+                if (levelResponse.ok) setLevel(levelData.data);
+
+                // Haal huidige XP op
+                const xpResponse = await fetch("https://fynk-backend.onrender.com/stats/xp", {
+                  headers: { "Authorization": `Bearer ${token}` },
+                });
+                const xpData = await xpResponse.json();
+                console.log("XP data: ", xpData);
+                if (xpResponse.ok) setXp(xpData.data);
+
+                // Haal drempel voor het volgende level op
+                const nextLevelResponse = await fetch("https://fynk-backend.onrender.com/stats/nextLevel", {
+                  headers: { "Authorization": `Bearer ${token}` },
+                });
+                const nextLevelData = await nextLevelResponse.json();
+                console.log("Next level data: ", nextLevelData);
+                if (nextLevelResponse.ok) setNextLevelThreshold(nextLevelData.data);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -146,6 +176,9 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Loading */}
+      <OverlayLoader visible={loading} />
+
       {/* Background gradient */}
       <LinearGradient
           colors={['rgba(252,252,252,0)', '#FCFCFC', '#C4CFFF', '#9C80FF']}
