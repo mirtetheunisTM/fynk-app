@@ -37,9 +37,11 @@ export default function RegisterScreen() {
 
       const data = await response.json();
 
-      if (response.ok && data.token) {
-        await AsyncStorage.setItem("authToken", data.token);
-        navigation.replace("MainTabs"); // Naar hoofdscherm
+      console.log("Token uit backend:", data.data?.token); // <-- voeg deze regel toe
+
+      if (response.ok && data.data?.token) {
+        await AsyncStorage.setItem("authToken", data.data.token); // <-- juiste pad!
+        navigation.replace("MainTabs"); // of "Onboarding"
       } else {
         setErrorMessage(data.message || "Registratie mislukt.");
       }
