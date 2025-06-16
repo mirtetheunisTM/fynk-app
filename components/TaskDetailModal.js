@@ -1,30 +1,34 @@
 import { Feather } from "@expo/vector-icons";
-import { Image, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import ImportanceRating from "../components/ImportanceRating";
 import theme from "../theme";
+import PrimaryButton from "./PrimaryButton";
+import SecondaryButton from "./SecondaryButton";
+import TaskTypeDropdown from "./TaskTypeDropdown"; // Add this import
 
-export default function TaskDetailModal({ visible, onClose, task, onEdit, onDelete }) {
+const categoryNames = {
+  1: "Study & Review",
+  2: "Write & Create",
+  3: "Quick tasks & admin",
+  4: "Life stuff",
+  5: "Me Time"
+};
+
+export default function TaskDetailModal({ visible, onClose, task, onEdit, onDelete, fetchTasks }) {
+  const [editMode, setEditMode] = useState(false);
+  const [editedTask, setEditedTask] = useState(task);
+
+  // Gebruik useEffect en maak een kopie van task
+  useEffect(() => {
+    setEditedTask(task ? { ...task } : null);
+    setEditMode(false);
+  }, [task, visible]);
+
   if (!task) return null;
 
   // Dummy mascotte image, pas aan op basis van task.type/category_id als je wilt
   const mascotteImg = require("../assets/images/mascottes/study.png");
-
-  // Importance als sterren
-  const renderStars = (importance) => {
-    const stars = [];
-    for (let i = 1; i <= 4; i++) {
-      stars.push(
-        <Feather
-          key={i}
-          name="star"
-          size={32}
-          color={i <= importance ? "#9C80FF" : "#D6D9F5"}
-          style={{ marginRight: 4 }}
-        />
-      );
-    }
-    return <View style={{ flexDirection: "row", marginTop: 8 }}>{stars}</View>;
-  };
 
   // Dummy focus sessions
   const focusSessions = [
@@ -46,6 +50,14 @@ export default function TaskDetailModal({ visible, onClose, task, onEdit, onDele
     return date.toLocaleDateString("en-GB", { weekday: "long" });
   };
 
+  // Opslaan van wijzigingen
+  const handleSave = () => {
+    if (onEdit) {
+      onEdit(editedTask);
+    }
+    setEditMode(false);
+  };
+
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.overlay}>
@@ -57,9 +69,11 @@ export default function TaskDetailModal({ visible, onClose, task, onEdit, onDele
               <Text style={styles.date}>{task.due_date ? formatDate(task.due_date) : ""}</Text>
             </View>
             <View style={styles.iconRow}>
-              <TouchableOpacity onPress={onEdit}>
-                <Feather name="edit-2" size={22} color="#9C80FF" style={{ marginRight: 16 }} />
-              </TouchableOpacity>
+              {!editMode && (
+                <TouchableOpacity onPress={() => setEditMode(true)}>
+                  <Feather name="edit-2" size={22} color="#9C80FF" style={{ marginRight: 16 }} />
+                </TouchableOpacity>
+              )}
               <TouchableOpacity onPress={onDelete}>
                 <Feather name="trash-2" size={22} color="#FF5C5C" style={{ marginRight: 16 }} />
               </TouchableOpacity>
@@ -75,24 +89,57 @@ export default function TaskDetailModal({ visible, onClose, task, onEdit, onDele
           </View>
 
           {/* Title */}
-          <Text style={[theme.fonts.h2, styles.title]}>{task.title}</Text>
+          {editMode ? (
+            <TextInput
+              style={[theme.fonts.h2, styles.title, { borderBottomWidth: 1, borderColor: "#ECE7FF" }]}
+              value={editedTask?.title || ""}
+              onChangeText={text => setEditedTask({ ...editedTask, title: text })}
+            />
+          ) : (
+            <Text style={[theme.fonts.h2, styles.title]}>{task.title}</Text>
+          )}
 
           {/* Description */}
           <Text style={styles.sectionLabel}>Description</Text>
           <View style={styles.inputBox}>
-            <Text style={theme.fonts.body}>{task.description}</Text>
+            {editMode ? (
+              <TextInput
+                style={theme.fonts.body}
+                value={editedTask?.description || ""}
+                onChangeText={text => setEditedTask({ ...editedTask, description: text })}
+                multiline
+              />
+            ) : (
+              <Text style={theme.fonts.body}>{task.description}</Text>
+            )}
           </View>
 
           {/* Type */}
           <Text style={styles.sectionLabel}>Type</Text>
           <View style={styles.inputBox}>
-            <Text style={theme.fonts.body}>{task.type || "Study & review"}</Text>
+            {editMode ? (
+              <TaskTypeDropdown
+                selectedCategory={String(editedTask?.category_id)}
+                setCategory={catId => setEditedTask({ ...editedTask, category_id: String(catId) })}
+              />
+            ) : (
+              <Text style={theme.fonts.body}>
+                {categoryNames[task.category_id] || "Study & Review"}
+              </Text>
+            )}
           </View>
 
           {/* Importance */}
           <Text style={styles.sectionLabel}>Importance</Text>
           <View style={styles.inputBox}>
-            <ImportanceRating value={task.importance} disabled />
+            {editMode ? (
+              <ImportanceRating
+                value={editedTask?.importance || 1}
+                onChange={val => setEditedTask({ ...editedTask, importance: val })}
+              />
+            ) : (
+              <ImportanceRating value={task.importance} disabled />
+            )}
           </View>
 
           {/* Recommended Focus Sessions */}
@@ -107,6 +154,14 @@ export default function TaskDetailModal({ visible, onClose, task, onEdit, onDele
               </View>
             ))}
           </View>
+
+          {/* Save/Cancel knoppen */}
+          {editMode && (
+            <View style={{ flexDirection: "row", gap: 12, marginTop: 24 }}>
+              <PrimaryButton title="Save" onPress={handleSave} style={{ flex: 1 }} />
+              <SecondaryButton title="Cancel" onPress={() => setEditMode(false)} style={{ flex: 1 }} />
+            </View>
+          )}
         </View>
       </View>
     </Modal>

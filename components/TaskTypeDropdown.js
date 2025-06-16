@@ -10,15 +10,16 @@ import {
 } from 'react-native';
 import theme from '../theme';
 
-const TASK_TYPES = [
-  { id: 'study', title: 'Study & Review', emoji: '🧠' },
-  { id: 'write', title: 'Write & Create', emoji: '📝' },
-  { id: 'admin', title: 'Quick tasks & admin', emoji: '📋' },
-  { id: 'life', title: 'Life stuff', emoji: '👨‍👩‍👧‍👦' },
-  { id: 'me', title: 'Me Time', emoji: '😌' },
-];
-
 const API_URL = "https://fynk-backend.onrender.com/categories";
+
+// Mapping van category_id naar mascotte-afbeelding
+const mascotteImages = {
+  1: require('../assets/images/mascottes/study.png'),
+  2: require('../assets/images/mascottes/write.png'),
+  3: require('../assets/images/mascottes/admin.png'),
+  4: require('../assets/images/mascottes/life.png'),
+  5: require('../assets/images/mascottes/me.png'),
+};
 
 export default function TaskTypeDropdown({ selectedCategory, setCategory }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -27,7 +28,6 @@ export default function TaskTypeDropdown({ selectedCategory, setCategory }) {
   const [error, setError] = useState(null);
 
   const toggleDropdown = () => setIsExpanded((prev) => !prev);
-  const handleSelect = (id) => setCategory(id);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -52,14 +52,11 @@ export default function TaskTypeDropdown({ selectedCategory, setCategory }) {
 
         if (response.ok) {
           setTaskTypes(data.data || []);
-          console.log("Types: ", data.data);
         } else {
           setError("Fout bij het ophalen van categorieën.");
-          console.log("Error: ", error);
         }
       } catch (error) {
         setError("Kan categorieën niet ophalen.");
-        console.log("Error: ", error);
       } finally {
         setLoading(false);
       }
@@ -68,23 +65,21 @@ export default function TaskTypeDropdown({ selectedCategory, setCategory }) {
     fetchCategories();
   }, []);
 
-  const getImage = (category_id) => {
-        category_id = Number(category_id);
-        switch (category_id) {
-            case 1: return require('../assets/images/mascottes/study.png');
-            case 2: return require('../assets/images/mascottes/write.png');
-            case 3: return require('../assets/images/mascottes/admin.png');
-            case 4: return require('../assets/images/mascottes/life.png');
-            case 5: return require('../assets/images/mascottes/me.png');
-            default: return require('../assets/images/mascottes/wave.png');
-        }
-    };
+  // Vind de geselecteerde categorie
+  const selected = taskTypes.find((type) => type.category_id === selectedCategory);
 
   return (
     <View style={styles.wrapper}>
       {/* Dropdown header */}
       <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownHeader}>
-        <Text style={[theme.fonts.body, styles.dropdownHeaderText]}>Type of task</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+          {selected && (
+            <Image source={mascotteImages[selected.category_id]} style={styles.emoji} />
+          )}
+          <Text style={[theme.fonts.body, styles.dropdownHeaderText]}>
+            {selected ? selected.name : "Type of task"}
+          </Text>
+        </View>
         <Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={20} color={theme.colors.darkBlue} />
       </TouchableOpacity>
 
@@ -95,27 +90,26 @@ export default function TaskTypeDropdown({ selectedCategory, setCategory }) {
             <TouchableOpacity
               key={item.category_id}
               style={styles.taskItem}
-              onPress={() => handleSelect(item.category_id)}
+              onPress={() => {
+                setCategory(String(item.category_id)); // <-- forceer string
+                setIsExpanded(false);
+              }}
             >
               {/* Radio */}
               <View style={styles.radioCircle}>
                 {selectedCategory === item.category_id && <View style={styles.radioDot} />}
               </View>
-
-              {/* Emoji */}
-              <Image source={getImage(item.category_id)} style={styles.emoji} />
-
+              {/* Mascotte */}
+              <Image source={mascotteImages[item.category_id]} style={styles.emoji} />
               {/* Title */}
               <Text style={[theme.fonts.body, styles.title]}>{item.name}</Text>
-
               {/* Info icon */}
-              <TouchableOpacity>
-                <Feather name="info" size={18} color={theme.colors.primaryPurple} />
-              </TouchableOpacity>
+              <Feather name="info" size={18} color={theme.colors.primaryPurple} />
             </TouchableOpacity>
           ))}
         </View>
       )}
+      {/* Geen extra tekst onderaan! */}
     </View>
   );
 }
@@ -135,6 +129,7 @@ const styles = StyleSheet.create({
   },
   dropdownHeaderText: {
     color: '#727480',
+    marginLeft: 8,
   },
   dropdownList: {
     marginTop: 8,
@@ -166,6 +161,7 @@ const styles = StyleSheet.create({
   emoji: {
     height: 24,
     width: 24,
+    marginRight: 8,
   },
   title: {
     flex: 1,

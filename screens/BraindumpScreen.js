@@ -166,8 +166,25 @@ export default function BraindumpScreen() {
 				visible={modalVisible}
 				onClose={() => setModalVisible(false)}
 				task={selectedTask}
+				onEdit={async (updatedTask) => {
+					const token = await AsyncStorage.getItem("authToken");
+					// Zet categoryId (camelCase) voor de backend
+					const body = {
+						...updatedTask,
+						categoryId: String(updatedTask.category_id), // <-- forceer string
+					};
+					await fetch(`https://fynk-backend.onrender.com/tasks/${updatedTask.task_id}`, {
+						method: "PUT",
+						headers: {
+							"Authorization": `Bearer ${token}`,
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(body)
+					});
+					await fetchTasks();
+					setModalVisible(false);
+				}}
 				onDelete={handleDelete}
-				onEdit={() => {/* navigeer naar edit-scherm of open edit-modal */}}
 			/>
 			<WarningPopup
 				visible={showWarning}
